@@ -1,6 +1,5 @@
-package org.korolev.automagazine.entities;
+package org.korolev.automagazine.api.entities;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,4 +1,4 @@
-package org.korolev.automagazine.entities;
+package org.korolev.automagazine.api.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
