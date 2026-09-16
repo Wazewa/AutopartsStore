@@ -1,9 +1,10 @@
-package org.korolev.automagazine.repositories;
+package org.korolev.automagazine.api.repositories;
 
-import org.korolev.automagazine.entities.AdminEntity;
+import org.korolev.automagazine.api.entities.AdminEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AdminRepository extends JpaRepository<AdminEntity, Long> {
+    boolean existsByEmail(String email);
 }

@@ -1,6 +1,6 @@
-package org.korolev.automagazine.repositories;
+package org.korolev.automagazine.api.repositories;
 
-import org.korolev.automagazine.entities.CartProductEntity;
+import org.korolev.automagazine.api.entities.CartProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
