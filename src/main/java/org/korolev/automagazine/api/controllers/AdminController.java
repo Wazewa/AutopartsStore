@@ -1,5 +1,6 @@
 package org.korolev.automagazine.api.controllers;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.korolev.automagazine.api.dto.AdminRequest;
 import org.korolev.automagazine.api.dto.AdminResponse;
@@ -28,12 +29,12 @@ public class AdminController {
     }
 
     @PostMapping
-    public ResponseEntity<AdminResponse> createAdmin(@RequestBody AdminRequest adminRequest) {
+    public ResponseEntity<AdminResponse> createAdmin(@Valid @RequestBody AdminRequest adminRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(adminService.createAdmin(adminRequest));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AdminResponse> updateAdmin(@PathVariable Long id, @RequestBody AdminRequest adminRequest) {
+    public ResponseEntity<AdminResponse> updateAdmin(@PathVariable Long id, @Valid @RequestBody AdminRequest adminRequest) {
         return ResponseEntity.ok(adminService.updateAdmin(id, adminRequest));
     }
 
