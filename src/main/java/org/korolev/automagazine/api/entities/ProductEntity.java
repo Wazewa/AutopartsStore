@@ -27,7 +27,7 @@ public class ProductEntity {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    @Column(name = "article", length = 100)
+    @Column(name = "article", length = 100, unique = true)
     private String article;
 
     @Column(name = "quantity", nullable = false)
