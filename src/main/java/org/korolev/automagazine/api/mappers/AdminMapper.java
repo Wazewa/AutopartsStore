@@ -10,7 +10,6 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface AdminMapper {
 
-    @Mapping(target = "passwordHash", ignore = true)
     AdminResponse toResponse(AdminEntity adminEntity);
 
     @Mapping(target = "id", ignore = true)
