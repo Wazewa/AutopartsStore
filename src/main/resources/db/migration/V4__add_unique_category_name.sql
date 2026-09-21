@@ -1,0 +1,1 @@
+ALTER TABLE Category ADD CONSTRAINT uk_category_name UNIQUE (name_category);
