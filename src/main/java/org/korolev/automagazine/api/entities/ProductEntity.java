@@ -27,7 +27,7 @@ public class ProductEntity {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    @Column(name = "article", length = 100, unique = true)
+    @Column(name = "article", length = 100)
     private String article;
 
     @Column(name = "quantity", nullable = false)
@@ -43,7 +43,7 @@ public class ProductEntity {
     private String comment;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id")
     private CategoryEntity category;
 
     @OneToMany(mappedBy = "product")
