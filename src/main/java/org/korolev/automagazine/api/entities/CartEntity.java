@@ -31,7 +31,7 @@ public class CartEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false, unique = true)
-    private CustomerEntity customerEntity;
+    private CustomerEntity customer;
 
     @OneToMany(mappedBy = "cart")
     @Builder.Default
