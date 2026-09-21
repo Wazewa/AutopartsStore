@@ -23,13 +23,14 @@ public class EventEntity {
     @Column(name = "event_date", nullable = false)
     private Instant eventDate = Instant.now();
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "event_type", nullable = false, length = 128)
-    private String eventType;
+    private EventType eventType;
 
     @Column(name = "session_id", nullable = false)
     private Integer sessionId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", nullable = false)
+    @JoinColumn(name = "customer_id")
     private CustomerEntity customer;
 }
