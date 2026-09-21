@@ -1,10 +1,6 @@
 package org.korolev.automagazine.api.exceptions;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
-@ResponseStatus(HttpStatus.CONFLICT)
-public class AdminAlreadyExistsException extends RuntimeException {
+public class AdminAlreadyExistsException extends ResourceAlreadyExistsException {
     public AdminAlreadyExistsException(String message) {
         super(message);
     }

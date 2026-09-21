@@ -1,10 +1,6 @@
 package org.korolev.automagazine.api.exceptions;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class CompatibilityNotFoundException extends RuntimeException {
+public class CompatibilityNotFoundException extends ResourceNotFoundException {
     public CompatibilityNotFoundException(String message) {
         super(message);
     }

@@ -1,10 +1,6 @@
 package org.korolev.automagazine.api.exceptions;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
-@ResponseStatus(HttpStatus.CONFLICT)
-public class OrderAlreadyExistsException extends RuntimeException {
+public class OrderAlreadyExistsException extends ResourceAlreadyExistsException {
     public OrderAlreadyExistsException(String message) {
         super(message);
     }

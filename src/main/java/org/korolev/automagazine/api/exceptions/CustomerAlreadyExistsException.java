@@ -1,10 +1,6 @@
 package org.korolev.automagazine.api.exceptions;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
-@ResponseStatus(HttpStatus.CONFLICT)
-public class CustomerAlreadyExistsException extends RuntimeException {
+public class CustomerAlreadyExistsException extends ResourceAlreadyExistsException {
     public CustomerAlreadyExistsException(String message) {
         super(message);
     }
