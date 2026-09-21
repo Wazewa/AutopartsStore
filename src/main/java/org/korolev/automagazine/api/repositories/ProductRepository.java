@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     boolean existsByArticle(String article);
+
+    boolean existsByCategoryId(Long id);
 }
