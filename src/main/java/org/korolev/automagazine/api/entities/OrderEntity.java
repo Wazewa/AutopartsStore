@@ -22,14 +22,16 @@ public class OrderEntity {
     private Long id;
 
     @Builder.Default
-    @Column(name = "order_date")
+    @Column(name = "order_date", nullable = false)
     private Instant orderDate = Instant.now();
 
-    @Column(name = "status", length = 20)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 20, nullable = false)
+    private OrderStatus status;
 
-    @Column(name = "pay_method", length = 20)
-    private String payMethod;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "pay_method", length = 20, nullable = false)
+    private PayMethod payMethod;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
