@@ -2,6 +2,7 @@ package org.korolev.automagazine.api.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -25,9 +26,9 @@ public class CartEntity {
     @Column(name = "created_date", nullable = false)
     private Instant createdDate = Instant.now();
 
-    @Builder.Default
+    @UpdateTimestamp
     @Column(name = "modified_date", nullable = false)
-    private Instant modifiedDate = Instant.now();
+    private Instant modifiedDate;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false, unique = true)
