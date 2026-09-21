@@ -36,6 +36,14 @@ public class CustomerService {
         ));
     }
 
+    @Transactional(readOnly = true)
+    public CustomerEntity findEntityById(Long id) {
+        return customerRepository.findById(id)
+                        .orElseThrow(
+                                () -> new CustomerNotFoundException("Customer not found.")
+                        );
+    }
+
     @Transactional
     public CustomerResponse createCustomer(CustomerRequest customerRequest) {
 
@@ -66,5 +74,4 @@ public class CustomerService {
         }
         customerRepository.deleteById(id);
     }
-
 }
