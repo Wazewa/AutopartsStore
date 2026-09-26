@@ -1,0 +1,11 @@
+target/*
+!target/*.jar
+./idea
+.git/
+.gitignore
+.idea/
+.dockerignore
+HELP.md
+.docker-compose.yml
+.env
+.env.example
