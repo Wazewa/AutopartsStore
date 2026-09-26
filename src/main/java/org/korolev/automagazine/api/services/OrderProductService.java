@@ -1,54 +1,108 @@
 package org.korolev.automagazine.api.services;
 
 import lombok.AllArgsConstructor;
+import org.korolev.automagazine.api.dto.OrderProductRequest;
+import org.korolev.automagazine.api.dto.OrderProductResponse;
+import org.korolev.automagazine.api.entities.OrderEntity;
 import org.korolev.automagazine.api.entities.OrderProductEntity;
+import org.korolev.automagazine.api.entities.OrderStatus;
+import org.korolev.automagazine.api.entities.ProductEntity;
 import org.korolev.automagazine.api.exceptions.OrderProductNotFoundException;
-import org.korolev.automagazine.api.exceptions.OrderProductAlreadyExistsException;
+import org.korolev.automagazine.api.mappers.OrderProductMapper;
 import org.korolev.automagazine.api.repositories.OrderProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class OrderProductService {
 
     private final OrderProductRepository orderProductRepository;
+    private final OrderService orderService;
+    private final ProductService productService;
+    private final OrderProductMapper orderProductMapper;
 
     @Transactional(readOnly = true)
-    public List<OrderProductEntity> findAllOrderProducts() {
-        return orderProductRepository.findAll();
+    public List<OrderProductResponse> findOrderItems(Long orderId) {
+        return orderProductRepository.findByOrderId(orderId).stream()
+                .map(orderProductMapper::toResponse)
+                .toList();
     }
 
-    @Transactional(readOnly = true)
-    public OrderProductEntity findOrderProductById(OrderProductEntity orderProductEntity) {
-        return orderProductRepository.findById(orderProductEntity.getId()).orElseThrow(
+    @Transactional
+    public OrderProductResponse addProductToOrder(Long orderId, OrderProductRequest orderProductRequest) {
+        OrderEntity orderEntity = orderService.findEntityById(orderId);
+
+        validateOrderIsModifiable(orderEntity);
+
+        ProductEntity productEntity = productService.findEntityById(orderProductRequest.productId());
+
+        Optional<OrderProductEntity> existing = orderProductRepository.findByOrderIdAndProductId(
+                orderId, orderProductRequest.productId()
+        );
+
+        if(existing.isPresent()) {
+            OrderProductEntity item = existing.get();
+            item.setQuantity(item.getQuantity() + orderProductRequest.quantity());
+            return orderProductMapper.toResponse(orderProductRepository.save(item));
+        }
+        else {
+            OrderProductEntity orderProductEntity = orderProductMapper.toEntity(orderProductRequest);
+            orderProductEntity.setOrder(orderEntity);
+            orderProductEntity.setProduct(productEntity);
+            orderProductEntity.setPriceAddAt(productEntity.getPrice());
+
+            return orderProductMapper.toResponse(orderProductRepository.save(orderProductEntity));
+        }
+    }
+
+    @Transactional
+    public OrderProductResponse updateQuantity(Long orderId, Long productId, Integer quantity) {
+
+        OrderEntity orderEntity = orderService.findEntityById(orderId);
+        validateOrderIsModifiable(orderEntity);
+
+        OrderProductEntity existing = orderProductRepository.findByOrderIdAndProductId(
+                orderId, productId
+        ).orElseThrow(
                 () -> new OrderProductNotFoundException("Order product not found.")
         );
+
+        existing.setQuantity(quantity);
+        return orderProductMapper.toResponse(orderProductRepository.save(existing));
     }
 
     @Transactional
-    public OrderProductEntity createOrderProduct(OrderProductEntity orderProductEntity) {
-        if(orderProductRepository.existsById(orderProductEntity.getId()) && orderProductEntity.getId() != null) {
-            throw new OrderProductAlreadyExistsException("Order product already exists.");
-        }
-        return orderProductRepository.save(orderProductEntity);
+    public void removeProductFromOrder(Long orderId, Long productId) {
+
+        OrderEntity orderEntity = orderService.findEntityById(orderId);
+        validateOrderIsModifiable(orderEntity);
+
+        OrderProductEntity existing = orderProductRepository.findByOrderIdAndProductId(
+                orderId, productId
+        ).orElseThrow(
+                () -> new OrderProductNotFoundException("Order product not found.")
+        );
+        orderProductRepository.delete(existing);
     }
 
     @Transactional
-    public OrderProductEntity updateOrderProduct(OrderProductEntity orderProductEntity) {
-        if(!orderProductRepository.existsById(orderProductEntity.getId())) {
-            throw new OrderProductNotFoundException("Order product not found.");
-        }
-        return orderProductRepository.save(orderProductEntity);
+    public void clearOrder(Long orderId) {
+
+        OrderEntity orderEntity = orderService.findEntityById(orderId);
+        validateOrderIsModifiable(orderEntity);
+
+        List<OrderProductEntity> items = orderProductRepository.findByOrderId(orderId);
+        orderProductRepository.deleteAll(items);
     }
 
-    @Transactional
-    public void deleteOrderProduct(OrderProductEntity orderProductEntity) {
-        if(!orderProductRepository.existsById(orderProductEntity.getId())) {
-            throw new OrderProductNotFoundException("Order product not found.");
+    private void validateOrderIsModifiable(OrderEntity orderEntity) {
+        if(orderEntity.getStatus() != OrderStatus.PENDING
+                && orderEntity.getStatus() != OrderStatus.PROCESSING) {
+            throw new IllegalStateException("Cannot modify order with status: " + orderEntity.getStatus());
         }
-        orderProductRepository.deleteById(orderProductEntity.getId());
     }
 }

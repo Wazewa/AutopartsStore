@@ -38,6 +38,13 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
+    public OrderEntity findEntityById(Long id) {
+        return orderRepository.findById(id).orElseThrow(
+                () -> new OrderNotFoundException("Order not found.")
+        );
+    }
+
+    @Transactional(readOnly = true)
     public List<OrderResponse> findOrdersByCustomerId(Long customerId) {
         return orderRepository.findByCustomerId(customerId).stream()
                 .map(orderMapper::toResponse)
@@ -64,5 +71,4 @@ public class OrderService {
         }
         orderRepository.deleteById(id);
     }
-
 }
