@@ -7,6 +7,7 @@ import org.korolev.automagazine.api.entities.OrderEntity;
 import org.korolev.automagazine.api.entities.OrderProductEntity;
 import org.korolev.automagazine.api.entities.OrderStatus;
 import org.korolev.automagazine.api.entities.ProductEntity;
+import org.korolev.automagazine.api.exceptions.OrderNotModifiableException;
 import org.korolev.automagazine.api.exceptions.OrderProductNotFoundException;
 import org.korolev.automagazine.api.mappers.OrderProductMapper;
 import org.korolev.automagazine.api.repositories.OrderProductRepository;
@@ -102,7 +103,7 @@ public class OrderProductService {
     private void validateOrderIsModifiable(OrderEntity orderEntity) {
         if(orderEntity.getStatus() != OrderStatus.PENDING
                 && orderEntity.getStatus() != OrderStatus.PROCESSING) {
-            throw new IllegalStateException("Cannot modify order with status: " + orderEntity.getStatus());
+            throw new OrderNotModifiableException("Cannot modify order with status: " + orderEntity.getStatus());
         }
     }
 }

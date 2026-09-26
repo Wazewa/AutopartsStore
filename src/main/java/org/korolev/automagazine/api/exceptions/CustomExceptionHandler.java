@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -93,6 +94,24 @@ public class CustomExceptionHandler {
                         "Error in " + fieldErrors.size() + " fields",
                         Instant.now(), httpServletRequest.getRequestURI(), fieldErrors));
     }
+
+    @ExceptionHandler(OrderNotModifiableException.class)
+    public ResponseEntity<ErrorResponse> handleOrderNotModifiable(
+            OrderNotModifiableException ex, HttpServletRequest request) {
+        log.warn("Order not modifiable: {}", ex.getMessage());
+        return createResponseEntity(HttpStatus.CONFLICT, "Conflict",
+                ex.getMessage(), Instant.now(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoResourceFoundException(
+            NoResourceFoundException ex, HttpServletRequest httpServletRequest) {
+        log.warn("Endpoint not found: {}", httpServletRequest.getRequestURI());
+        return createResponseEntity(HttpStatus.NOT_FOUND, "Not found",
+                "Endpoint not found: " + httpServletRequest.getRequestURI(),
+                Instant.now(), httpServletRequest.getRequestURI());
+    }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex, HttpServletRequest httpServletRequest) {
