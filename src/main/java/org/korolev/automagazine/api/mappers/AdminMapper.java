@@ -16,7 +16,13 @@ public interface AdminMapper {
     @Mapping(target = "registeredAt", ignore = true)
     @Mapping(target = "accessLevel", ignore = true)
     @Mapping(target = "orders", ignore = true)
+    @Mapping(target = "passwordHash", source = "password")
     AdminEntity toEntity(AdminRequest adminRequest);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "registeredAt", ignore = true)
+    @Mapping(target = "accessLevel", ignore = true)
+    @Mapping(target = "orders", ignore = true)
+    @Mapping(target = "passwordHash", source = "password")
     void updateEntity(AdminRequest adminRequest, @MappingTarget AdminEntity adminEntity);
 }

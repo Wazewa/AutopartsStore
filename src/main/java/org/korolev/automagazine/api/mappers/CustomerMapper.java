@@ -16,7 +16,13 @@ public interface CustomerMapper {
     @Mapping(target = "registeredAt", ignore = true)
     @Mapping(target = "orders", ignore = true)
     @Mapping(target = "events", ignore = true)
+    @Mapping(target = "passwordHash", source = "password")
     CustomerEntity toEntity(CustomerRequest customerRequest);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "registeredAt", ignore = true)
+    @Mapping(target = "orders", ignore = true)
+    @Mapping(target = "events", ignore = true)
+    @Mapping(target = "passwordHash", source = "password")
     void updateEntity(CustomerRequest customerRequest, @MappingTarget CustomerEntity customerEntity);
 }
