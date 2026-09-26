@@ -1,7 +1,20 @@
 package org.korolev.automagazine.api.entities;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.FetchType;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
 
@@ -11,7 +24,11 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "order_product")
+@Table(name = "order_product",
+        uniqueConstraints = @UniqueConstraint(
+        name = "uk_order_product",
+        columnNames = {"order_id", "product_id"}
+))
 public class OrderProductEntity {
 
     @Id
@@ -20,7 +37,7 @@ public class OrderProductEntity {
     private Long id;
 
     @Column(name = "price_add_at", nullable = false)
-    private BigDecimal price;
+    private BigDecimal priceAddAt;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;

@@ -34,7 +34,7 @@ public class CartEntity {
     @JoinColumn(name = "customer_id", nullable = false, unique = true)
     private CustomerEntity customer;
 
-    @OneToMany(mappedBy = "cart")
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<CartProductEntity> cartProductEntities = new ArrayList<>();
 }

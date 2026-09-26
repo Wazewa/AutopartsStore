@@ -11,7 +11,11 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "cart_product")
+@Table(name = "cart_product",
+        uniqueConstraints = @UniqueConstraint(
+        name = "uk_cart_product",
+        columnNames = {"cart_id", "product_id"}
+))
 public class CartProductEntity {
 
     @Id
@@ -20,7 +24,7 @@ public class CartProductEntity {
     private Long id;
 
     @Column(name = "price_add_at", nullable = false)
-    private BigDecimal price;
+    private BigDecimal priceAddAt;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;

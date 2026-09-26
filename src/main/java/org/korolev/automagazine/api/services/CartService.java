@@ -36,6 +36,13 @@ public class CartService {
     }
 
     @Transactional(readOnly = true)
+    public CartEntity findEntityById(Long id) {
+        return cartRepository.findById(id).orElseThrow(
+                () -> new CartNotFoundException("Cart not found.")
+        );
+    }
+
+    @Transactional(readOnly = true)
     public CartResponse findCartByCustomerId(Long customerId) {
         CartEntity cartEntity = cartRepository.findByCustomerId(customerId)
                 .orElseThrow(

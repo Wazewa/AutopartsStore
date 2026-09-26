@@ -41,7 +41,7 @@ public class OrderEntity {
     @JoinColumn(name = "processed_by_admin_id")
     private AdminEntity admin;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<OrderProductEntity> orderProductEntities = new ArrayList<>();
 }
