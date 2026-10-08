@@ -19,49 +19,57 @@ REST API для интернет-магазина автозапчастей.
 
 ```bash
 # Клонировать репозиторий
-git clone <url>
-```
+git clone https://github.com/Wazewa/Automagazine.git
+cd Automagazine
 
 # Создать .env из шаблона
 cp .env.example .env
 
 # Запустить
-```bash
 docker compose up -d --build
 ```
 
-Приложение будет доступно на http://localhost:8080
+Приложение будет доступно на [http://localhost:8080](http://localhost:8080).
+При первом запуске Flyway автоматически применит миграции и создаст схему БД.
 
 ### Локально
 
-# Собрать JAR
 ```bash
+# Собрать JAR
 mvn clean package -DskipTests
-```
 
 # Запустить с профилем dev
-```bash
 java -jar target/*.jar --spring.profiles.active=dev
 ```
 
+## Архитектура
+
+Проект построен по feature-based архитектуре:
+- Каждая фича (`admin/`, `customer/`, `product/`, ...) — самодостаточный пакет
+- Внутри фичи: `controller/`, `service/`, `entity/`, `dto/`, `mapper/`, `repository/`, `exception/`
+- Конфигурация в `config/`
+
+Это позволяет легко выделить любую фичу в отдельный микросервис.
+
 ## API документация
 
-Swagger UI: http://localhost:8080/swagger-ui.html
+- Swagger UI: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- OpenAPI JSON: [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
 
 ## Основные endpoints
 
 | Ресурс | URL |
 |--------|-----|
-| Admins | /api/admins |
-| Customers | /api/customers |
-| Products | /api/products |
-| Categories | /api/categories |
-| Compatibilities | /api/compatibilities |
-| Events | /api/events |
-| Carts | /api/carts |
-| Cart Items | /api/carts/{cartId}/items |
-| Orders | /api/orders |
-| Order Items | /api/orders/{orderId}/items |
+| Admins | `/api/admins` |
+| Customers | `/api/customers` |
+| Products | `/api/products` |
+| Categories | `/api/categories` |
+| Compatibilities | `/api/compatibilities` |
+| Events | `/api/events` |
+| Carts | `/api/carts` |
+| Cart Items | `/api/carts/{cartId}/items` |
+| Orders | `/api/orders` |
+| Order Items | `/api/orders/{orderId}/items` |
 
 ## Тестирование
 
