@@ -65,7 +65,14 @@ Swagger UI: http://localhost:8080/swagger-ui.html
 
 ## Тестирование
 
-В разработке
+### Swagger UI
+
+Все endpoints доступны для тестирования прямо из браузера:
+[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
+### Postman
+
+Postman коллекция: `postman/Automagazine.postman_collection.json` (в разработке)
 
 ## Автор
 
