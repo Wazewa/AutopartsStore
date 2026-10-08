@@ -73,7 +73,3 @@ Swagger UI: http://localhost:8080/swagger-ui.html
 ### Postman
 
 Postman коллекция: `postman/Automagazine.postman_collection.json` (в разработке)
-
-## Автор
-
-Королев Иван
