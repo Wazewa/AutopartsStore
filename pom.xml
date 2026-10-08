@@ -9,10 +9,10 @@
         <relativePath/>
     </parent>
     <groupId>org.korolev</groupId>
-    <artifactId>Automagazine</artifactId>
+    <artifactId>AutopartsStore</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Automagazine</name>
-    <description>Automagazine</description>
+    <name>AutopartsStore</name>
+    <description>AutopartsStore</description>
     <url/>
     <licenses>
         <license/>
