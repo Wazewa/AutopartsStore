@@ -30,7 +30,7 @@ public class CustomerEntity {
     @Column(name = "surname", nullable = false, length = 30)
     private String surname;
 
-    @Column(name = "patronymic", nullable = false, length = 30)
+    @Column(name = "patronymic", length = 30)
     private String patronymic;
 
     @Column(name = "email", nullable = false, length = 100, unique = true)
