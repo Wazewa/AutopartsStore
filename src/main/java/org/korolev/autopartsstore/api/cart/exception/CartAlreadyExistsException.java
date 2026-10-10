@@ -1,6 +1,6 @@
 package org.korolev.autopartsstore.api.cart.exception;
 
-import org.korolev.autopartsstore.api.exceptions.ResourceAlreadyExistsException;
+import org.korolev.autopartsstore.api.exception.ResourceAlreadyExistsException;
 
 public class CartAlreadyExistsException extends ResourceAlreadyExistsException {
     public CartAlreadyExistsException(String message) {
