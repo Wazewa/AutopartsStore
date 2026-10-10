@@ -1,4 +1,4 @@
-package org.korolev.autopartsstore.api.exceptions;
+package org.korolev.autopartsstore.api.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String message) {
