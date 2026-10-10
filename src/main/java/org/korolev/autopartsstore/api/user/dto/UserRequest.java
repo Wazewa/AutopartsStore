@@ -1,10 +1,10 @@
-package org.korolev.autopartsstore.api.customer.dto;
+package org.korolev.autopartsstore.api.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 
 @Schema(description = "Запрос на создание/изменение клиента")
-public record CustomerRequest(
+public record UserRequest(
 
         @Schema(description = "Имя клиента", example = "Иван",
                 requiredMode = Schema.RequiredMode.REQUIRED)
@@ -35,6 +35,10 @@ public record CustomerRequest(
         @NotBlank(message = "Password is required")
         @Size(min = 8, max = 100, message = "Password must be between 8 and 100 characters")
         String password,
+
+        @Schema(description = "Код роли", example = "ROLE_CUSTOMER")
+        @NotBlank(message = "Role is required")
+        String roleCode,
 
         @Schema(description = "Номер телефона", example = "89999999999",
                 requiredMode = Schema.RequiredMode.REQUIRED)

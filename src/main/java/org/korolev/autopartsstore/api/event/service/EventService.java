@@ -1,14 +1,18 @@
 package org.korolev.autopartsstore.api.event.service;
 
 import lombok.AllArgsConstructor;
-import org.korolev.autopartsstore.api.customer.service.CustomerService;
+import org.korolev.autopartsstore.api.user.entity.UserEntity;
+import org.korolev.autopartsstore.api.user.service.UserService;
 import org.korolev.autopartsstore.api.event.dto.EventRequest;
 import org.korolev.autopartsstore.api.event.dto.EventResponse;
-import org.korolev.autopartsstore.api.customer.entity.CustomerEntity;
 import org.korolev.autopartsstore.api.event.entity.EventEntity;
 import org.korolev.autopartsstore.api.event.exception.EventNotFoundException;
 import org.korolev.autopartsstore.api.event.mapper.EventMapper;
 import org.korolev.autopartsstore.api.event.repository.EventRepository;
+import org.korolev.autopartsstore.api.security.CurrentUserService;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +24,7 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
-    private final CustomerService customerService;
+    private final UserService userService;
 
     @Transactional(readOnly = true)
     public List<EventResponse> findAllEvents() {
@@ -40,15 +44,13 @@ public class EventService {
 
     @Transactional
     public EventResponse createEvent(EventRequest eventRequest) {
-
-        CustomerEntity customerEntity = null;
-
-        if(eventRequest.customerId() != null) {
-            customerEntity = customerService.findEntityById(eventRequest.customerId());
-        }
-
         EventEntity eventEntity = eventMapper.toEntity(eventRequest);
-        eventEntity.setCustomer(customerEntity);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
+            UserEntity user = userService.findByEmail(auth.getName());
+            eventEntity.setUser(user);
+        }
 
         return eventMapper.toResponse(eventRepository.save(eventEntity));
     }

@@ -2,7 +2,7 @@ package org.korolev.autopartsstore.api.event.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.korolev.autopartsstore.api.customer.entity.CustomerEntity;
+import org.korolev.autopartsstore.api.user.entity.UserEntity;
 
 import java.time.Instant;
 
@@ -32,6 +32,6 @@ public class EventEntity {
     private Integer sessionId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id")
-    private CustomerEntity customer;
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 }

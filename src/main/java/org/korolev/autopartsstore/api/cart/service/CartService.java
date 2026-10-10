@@ -1,13 +1,14 @@
 package org.korolev.autopartsstore.api.cart.service;
 
 import lombok.AllArgsConstructor;
-import org.korolev.autopartsstore.api.customer.service.CustomerService;
+import org.korolev.autopartsstore.api.user.service.UserService;
 import org.korolev.autopartsstore.api.cart.dto.CartResponse;
 import org.korolev.autopartsstore.api.cart.entity.CartEntity;
-import org.korolev.autopartsstore.api.customer.entity.CustomerEntity;
+import org.korolev.autopartsstore.api.user.entity.UserEntity;
 import org.korolev.autopartsstore.api.cart.exception.CartNotFoundException;
 import org.korolev.autopartsstore.api.cart.mapper.CartMapper;
 import org.korolev.autopartsstore.api.cart.repository.CartRepository;
+import org.korolev.autopartsstore.api.security.CurrentUserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +20,8 @@ public class CartService {
 
     private final CartRepository cartRepository;
     private final CartMapper cartMapper;
-    private final CustomerService customerService;
+    private final UserService userService;
+    private final CurrentUserService currentUserService;
 
     @Transactional(readOnly = true)
     public List<CartResponse> findAllCarts() {
@@ -44,8 +46,8 @@ public class CartService {
     }
 
     @Transactional(readOnly = true)
-    public CartResponse findCartByCustomerId(Long customerId) {
-        CartEntity cartEntity = cartRepository.findByCustomerId(customerId)
+    public CartResponse findCartByUserId(Long userId) {
+        CartEntity cartEntity = cartRepository.findByUserId(userId)
                 .orElseThrow(
                         () -> new CartNotFoundException("Cart not found.")
                 );
@@ -53,14 +55,14 @@ public class CartService {
     }
 
     @Transactional
-    public CartResponse getOrCreateCart(Long customerId) {
-        return cartRepository.findByCustomerId(customerId)
+    public CartResponse getOrCreateCart(Long userId) {
+        return cartRepository.findByUserId(userId)
                 .map(cartMapper::toResponse)
                 .orElseGet(() -> {
-                        CustomerEntity customer = customerService.findEntityById(customerId);
+                        UserEntity user = userService.findByEmail(currentUserService.getEmail());
 
                         CartEntity cartEntity = CartEntity.builder()
-                                .customer(customer)
+                                .user(user)
                                 .build();
                         return cartMapper.toResponse(cartRepository.save(cartEntity));
                 });

@@ -1,14 +1,14 @@
-package org.korolev.autopartsstore.api.customer.repository;
+package org.korolev.autopartsstore.api.user.repository;
 
-import org.korolev.autopartsstore.api.customer.entity.CustomerEntity;
+import org.korolev.autopartsstore.api.user.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<CustomerEntity, Long> {
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
     boolean existsByEmail(String email);
 
-    Optional<CustomerEntity> findByEmail(String email);
+    Optional<UserEntity> findByEmail(String email);
 }

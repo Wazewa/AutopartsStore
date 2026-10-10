@@ -54,10 +54,10 @@ public class CartController {
     })
     @Operation(summary = "Получить корзину по ID пользователя",
             description = "Возвращает корзину по заданному ID пользователя")
-    @GetMapping("/customer/{customerId}")
-    public ResponseEntity<CartResponse> getCartByCustomerId(
-            @Parameter(description = "ID пользователя", example = "1") @PathVariable Long customerId) {
-        return ResponseEntity.ok(cartService.findCartByCustomerId(customerId));
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<CartResponse> getCartByUserId(
+            @Parameter(description = "ID пользователя", example = "1") @PathVariable Long userId) {
+        return ResponseEntity.ok(cartService.findCartByUserId(userId));
     }
 
     @ApiResponses({
@@ -67,10 +67,10 @@ public class CartController {
     })
     @Operation(summary = "Создать корзину для пользователя ",
             description = "Создает корзину для пользователя с заданным ID")
-    @PostMapping("/customer/{customerId}")
+    @PostMapping("/user/{userId}")
     public ResponseEntity<CartResponse> getOrCreateCart(
-            @Parameter(description = "ID пользователя", example = "1") @PathVariable Long customerId) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(cartService.getOrCreateCart(customerId));
+            @Parameter(description = "ID пользователя", example = "1") @PathVariable Long userId) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(cartService.getOrCreateCart(userId));
     }
 
     @ApiResponses({

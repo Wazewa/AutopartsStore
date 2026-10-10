@@ -1,9 +1,10 @@
-package org.korolev.autopartsstore.api.customer.dto;
+package org.korolev.autopartsstore.api.user.dto;
 
-public record CustomerResponse(
+public record UserResponse(
     String name,
     String surname,
     String patronymic,
     String email,
-    String phone
+    String phone,
+    String roleCode
 ) {}

@@ -1,9 +1,9 @@
-package org.korolev.autopartsstore.api.customer.exception;
+package org.korolev.autopartsstore.api.user.exception;
 
 import org.korolev.autopartsstore.api.exception.ResourceNotFoundException;
 
-public class CustomerNotFoundException extends ResourceNotFoundException {
-    public CustomerNotFoundException(String message) {
+public class UserNotFoundException extends ResourceNotFoundException {
+    public UserNotFoundException(String message) {
         super(message);
     }
 }

@@ -1,4 +1,4 @@
-package org.korolev.autopartsstore.api.customer.controller;
+package org.korolev.autopartsstore.api.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -7,9 +7,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.korolev.autopartsstore.api.customer.dto.CustomerRequest;
-import org.korolev.autopartsstore.api.customer.dto.CustomerResponse;
-import org.korolev.autopartsstore.api.customer.service.CustomerService;
+import org.korolev.autopartsstore.api.user.dto.UserRequest;
+import org.korolev.autopartsstore.api.user.dto.UserResponse;
+import org.korolev.autopartsstore.api.user.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,56 +23,42 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 
 @RestController
-@Tag(name = "Customers", description = "Управление клиентами")
-@RequestMapping("/api/customers")
+@Tag(name = "Users", description = "Управление пользователями")
+@RequestMapping("/api/users")
 @AllArgsConstructor
-public class CustomerController {
+public class UserController {
 
-    private final CustomerService customerService;
+    private final UserService userService;
 
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Все клиенты успешно отображены")
+            @ApiResponse(responseCode = "200", description = "Все пользователи успешно отображены")
     })
-    @Operation(summary = "Получить всех клиентов", description = "Возвращает список всех клиентов")
+    @Operation(summary = "Получить всех пользователей", description = "Возвращает список всех пользователей")
     @GetMapping
-    public ResponseEntity<List<CustomerResponse>> getAllCustomers() {
-        return ResponseEntity.ok(customerService.findAllCustomers());
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        return ResponseEntity.ok(userService.findAllUsers());
     }
 
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Клиент с заданным ID успешно отображен"),
-            @ApiResponse(responseCode = "404", description = "Клиент с заданным ID не найден")
+            @ApiResponse(responseCode = "200", description = "Пользователь с заданным ID успешно отображен"),
+            @ApiResponse(responseCode = "404", description = "Пользователь с заданным ID не найден")
     })
-    @Operation(summary = "Получить клиента по ID", description = "Возвращает клиента по ID")
+    @Operation(summary = "Получить пользователя по ID", description = "Возвращает пользователя по ID")
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerResponse> getCustomerById(
-            @Parameter(description = "ID клиента", example = "1") @PathVariable Long id) {
-        return ResponseEntity.ok(customerService.findCustomerById(id));
+    public ResponseEntity<UserResponse> getUserById(
+            @Parameter(description = "ID пользователя", example = "1") @PathVariable Long id) {
+        return ResponseEntity.ok(userService.findUserById(id));
     }
 
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Клиент успешно обновлен"),
-            @ApiResponse(responseCode = "400", description = "Невалидные данные"),
-            @ApiResponse(responseCode = "404", description = "Клиент с заданным ID не найден"),
-            @ApiResponse(responseCode = "409", description = "Клиент с заданным email уже есть")
+            @ApiResponse(responseCode = "204", description = "Пользователь с заданным ID успешно удален"),
+            @ApiResponse(responseCode = "404", description = "Пользователь с заданным ID не найден")
     })
-    @Operation(summary = "Обновить клиента", description = "Обновляет клиента по заданному ID")
-    @PutMapping("/{id}")
-    public ResponseEntity<CustomerResponse> updateCustomer(
-            @Parameter(description = "ID клиента", example = "1") @PathVariable Long id,
-            @Valid @RequestBody CustomerRequest customerRequest) {
-        return ResponseEntity.ok(customerService.updateCustomer(id, customerRequest));
-    }
-
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Клиент с заданным ID успешно удален"),
-            @ApiResponse(responseCode = "404", description = "Клиент с заданным ID не найден")
-    })
-    @Operation(summary = "Удалить клиента по ID", description = "Удаляет клиента по ID")
+    @Operation(summary = "Удалить пользователя по ID", description = "Удаляет пользователя по ID")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomer(
-            @Parameter(description = "ID клиента", example = "1") @PathVariable Long id) {
-        customerService.deleteCustomer(id);
+    public ResponseEntity<Void> deleteUser(
+            @Parameter(description = "ID пользователя", example = "1") @PathVariable Long id) {
+        userService.deleteUser(id);
 
         return ResponseEntity.noContent().build();
     }

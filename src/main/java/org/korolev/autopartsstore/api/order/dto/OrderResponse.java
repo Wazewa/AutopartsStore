@@ -10,7 +10,6 @@ public record OrderResponse(
         Instant orderDate,
         OrderStatus status,
         PayMethod payMethod,
-        Long customerId,
-        Long adminId
+        Long userId
 ) {
 }

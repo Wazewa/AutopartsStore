@@ -6,5 +6,5 @@ public record CartResponse(
         Long id,
         Instant createdDate,
         Instant modifiedDate,
-        Long customerId
+        Long userId
 ) {}

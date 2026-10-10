@@ -1,13 +1,12 @@
-package org.korolev.autopartsstore.api.customer.service;
+package org.korolev.autopartsstore.api.user.service;
 
 import lombok.AllArgsConstructor;
-import org.korolev.autopartsstore.api.customer.dto.CustomerRequest;
-import org.korolev.autopartsstore.api.customer.dto.CustomerResponse;
-import org.korolev.autopartsstore.api.customer.entity.CustomerEntity;
-import org.korolev.autopartsstore.api.customer.exception.CustomerAlreadyExistsException;
-import org.korolev.autopartsstore.api.customer.exception.CustomerNotFoundException;
-import org.korolev.autopartsstore.api.customer.mapper.CustomerMapper;
-import org.korolev.autopartsstore.api.customer.repository.CustomerRepository;
+import org.korolev.autopartsstore.api.user.dto.UserRequest;
+import org.korolev.autopartsstore.api.user.dto.UserResponse;
+import org.korolev.autopartsstore.api.user.entity.UserEntity;
+import org.korolev.autopartsstore.api.user.exception.UserNotFoundException;
+import org.korolev.autopartsstore.api.user.mapper.UserMapper;
+import org.korolev.autopartsstore.api.user.repository.UserRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,57 +15,44 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class CustomerService {
+public class UserService {
 
-    private final CustomerRepository customerRepository;
-    private final CustomerMapper customerMapper;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ADMIN')")
-    public List<CustomerResponse> findAllCustomers() {
-        return customerRepository.findAll().stream()
-                .map(customerMapper::toResponse)
+    public List<UserResponse> findAllUsers() {
+        return userRepository.findAll().stream()
+                .map(userMapper::toResponse)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ADMIN')")
-    public CustomerResponse findCustomerById(Long id) {
-        return customerMapper.toResponse(
-                customerRepository.findById(id)
+    public UserResponse findUserById(Long id) {
+        return userMapper.toResponse(
+                userRepository.findById(id)
                         .orElseThrow(
-                        () -> new CustomerNotFoundException("Customer not found.")
+                        () -> new UserNotFoundException("User not found.")
         ));
     }
 
     @Transactional(readOnly = true)
-    public CustomerEntity findByEmail(String email) {
-        return customerRepository.findByEmail(email)
+    public UserEntity findByEmail(String email) {
+        return userRepository.findByEmail(email)
                         .orElseThrow(
-                                () -> new CustomerNotFoundException("Customer with email" +
+                                () -> new UserNotFoundException("User with email" +
                                         email + " not found")
                         );
     }
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    public CustomerResponse updateCustomer(Long id, CustomerRequest customerRequest) {
-
-        CustomerEntity customerEntity = customerRepository.findById(id).orElseThrow(
-            () -> new CustomerNotFoundException("Customer not found.")
-        );
-
-        customerMapper.updateEntity(customerRequest, customerEntity);
-
-        return customerMapper.toResponse(customerRepository.save(customerEntity));
-    }
-
-    @Transactional
-    @PreAuthorize("hasRole('ADMIN')")
-    public void deleteCustomer(Long id) {
-        if(!customerRepository.existsById(id)) {
-            throw new CustomerNotFoundException("Customer not found.");
+    public void deleteUser(Long id) {
+        if(!userRepository.existsById(id)) {
+            throw new UserNotFoundException("User not found.");
         }
-        customerRepository.deleteById(id);
+        userRepository.deleteById(id);
     }
 }

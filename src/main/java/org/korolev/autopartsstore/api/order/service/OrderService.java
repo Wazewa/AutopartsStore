@@ -1,10 +1,10 @@
 package org.korolev.autopartsstore.api.order.service;
 
 import lombok.AllArgsConstructor;
-import org.korolev.autopartsstore.api.customer.service.CustomerService;
+import org.korolev.autopartsstore.api.user.entity.UserEntity;
+import org.korolev.autopartsstore.api.user.service.UserService;
 import org.korolev.autopartsstore.api.order.dto.OrderRequest;
 import org.korolev.autopartsstore.api.order.dto.OrderResponse;
-import org.korolev.autopartsstore.api.customer.entity.CustomerEntity;
 import org.korolev.autopartsstore.api.order.entity.OrderEntity;
 import org.korolev.autopartsstore.api.order.entity.OrderStatus;
 import org.korolev.autopartsstore.api.order.exception.OrderNotFoundException;
@@ -25,7 +25,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
-    private final CustomerService customerService;
+    private final UserService userService;
     private final CurrentUserService currentUserService;
 
     @Transactional(readOnly = true)
@@ -46,10 +46,10 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('CUSTOMER')")
-    public List<OrderResponse> findCustomerOrders() {
-        CustomerEntity customer = customerService.findByEmail(currentUserService.getEmail());
+    public List<OrderResponse> findMyOrders() {
+        UserEntity user = userService.findByEmail(currentUserService.getEmail());
 
-        return orderRepository.findByCustomerId(customer.getId()).stream()
+        return orderRepository.findByUserId(user.getId()).stream()
                 .map(orderMapper::toResponse)
                 .toList();
     }
@@ -58,11 +58,11 @@ public class OrderService {
     @PreAuthorize("hasRole('CUSTOMER')")
     public OrderResponse createOrder(OrderRequest orderRequest) {
 
-        CustomerEntity customerEntity = customerService.findByEmail(currentUserService.getEmail());
+        UserEntity userEntity = userService.findByEmail(currentUserService.getEmail());
 
         OrderEntity orderEntity = orderMapper.toEntity(orderRequest);
         orderEntity.setStatus(OrderStatus.PENDING);
-        orderEntity.setCustomer(customerEntity);
+        orderEntity.setUser(userEntity);
         orderEntity.setOrderDate(Instant.now());
 
         return orderMapper.toResponse(orderRepository.save(orderEntity));
@@ -81,7 +81,7 @@ public class OrderService {
                 () -> new OrderNotFoundException("Order not found")
         );
 
-        if (!order.getCustomer().getEmail().equals(currentUserService.getEmail())) {
+        if (!order.getUser().getEmail().equals(currentUserService.getEmail())) {
             throw new AccessDeniedException("Not your order");
         }
 

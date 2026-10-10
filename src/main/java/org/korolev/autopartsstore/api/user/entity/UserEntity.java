@@ -1,27 +1,28 @@
-package org.korolev.autopartsstore.api.customer.entity;
+package org.korolev.autopartsstore.api.user.entity;
 
 
 import jakarta.persistence.*;
 import lombok.*;
 import org.korolev.autopartsstore.api.event.entity.EventEntity;
 import org.korolev.autopartsstore.api.order.entity.OrderEntity;
+import org.korolev.autopartsstore.api.role.entity.RoleEntity;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "customer")
+@Table(name = "users")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CustomerEntity {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_id")
+    @Column(name = "user_id")
     private Long id;
 
     @Column(name = "name", nullable = false, length = 30)
@@ -46,11 +47,15 @@ public class CustomerEntity {
     @Column(name = "phone", nullable = false, unique = true)
     private String phone;
 
-    @OneToMany(mappedBy = "customer")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id", nullable = false)
+    private RoleEntity role;
+
+    @OneToMany(mappedBy = "user")
     @Builder.Default
     private List<OrderEntity> orders = new ArrayList<>();
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "user")
     @Builder.Default
     private List<EventEntity> events = new ArrayList<>();
 }

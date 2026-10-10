@@ -57,7 +57,7 @@ public class OrderController {
     @Operation(summary = "Получить мои заказы", description = "Возвращает заказы пользователя")
     @GetMapping("/me")
     public ResponseEntity<List<OrderResponse>> getMyOrders() {
-        return ResponseEntity.ok(orderService.findCustomerOrders());
+        return ResponseEntity.ok(orderService.findMyOrders());
     }
 
     @ApiResponses({

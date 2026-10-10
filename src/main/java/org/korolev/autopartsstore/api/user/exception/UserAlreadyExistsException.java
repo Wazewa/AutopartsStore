@@ -1,9 +1,9 @@
-package org.korolev.autopartsstore.api.customer.exception;
+package org.korolev.autopartsstore.api.user.exception;
 
 import org.korolev.autopartsstore.api.exception.ResourceAlreadyExistsException;
 
-public class CustomerAlreadyExistsException extends ResourceAlreadyExistsException {
-    public CustomerAlreadyExistsException(String message) {
+public class UserAlreadyExistsException extends ResourceAlreadyExistsException {
+    public UserAlreadyExistsException(String message) {
         super(message);
     }
 }

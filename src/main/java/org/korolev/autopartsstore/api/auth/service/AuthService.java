@@ -5,13 +5,10 @@ import org.korolev.autopartsstore.api.auth.dto.AuthResponse;
 import org.korolev.autopartsstore.api.auth.dto.LoginRequest;
 import org.korolev.autopartsstore.api.auth.dto.RegisterRequest;
 import org.korolev.autopartsstore.api.auth.mapper.AuthMapper;
-import org.korolev.autopartsstore.api.customer.entity.CustomerEntity;
-import org.korolev.autopartsstore.api.customer.exception.CustomerAlreadyExistsException;
-import org.korolev.autopartsstore.api.customer.repository.CustomerRepository;
-import org.korolev.autopartsstore.api.role.entity.CustomerRole;
-import org.korolev.autopartsstore.api.role.entity.CustomerRoleId;
+import org.korolev.autopartsstore.api.user.entity.UserEntity;
+import org.korolev.autopartsstore.api.user.exception.UserAlreadyExistsException;
+import org.korolev.autopartsstore.api.user.repository.UserRepository;
 import org.korolev.autopartsstore.api.role.entity.RoleEntity;
-import org.korolev.autopartsstore.api.role.repository.CustomerRoleRepository;
 import org.korolev.autopartsstore.api.role.repository.RoleRepository;
 import org.korolev.autopartsstore.api.security.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,8 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @AllArgsConstructor
 public class AuthService {
-    private final CustomerRepository customerRepository;
-    private final CustomerRoleRepository customerRoleRepository;
+    private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final CustomUserDetailsService userDetails;
     private final AuthMapper authMapper;
@@ -37,15 +33,20 @@ public class AuthService {
     @Transactional
     public AuthResponse register(RegisterRequest registerRequest) {
 
-        if (customerRepository.existsByEmail(registerRequest.email())) {
-            throw new CustomerAlreadyExistsException("Customer with " +
+        if (userRepository.existsByEmail(registerRequest.email())) {
+            throw new UserAlreadyExistsException("User with " +
                     registerRequest.email() + " email already exists.");
         }
 
-        CustomerEntity customerEntity = authMapper.toEntity(registerRequest);
-        customerEntity.setPasswordHash(passwordEncoder.encode(registerRequest.password()));
-        CustomerEntity saved = customerRepository.save(customerEntity);
-        assignCustomerRole(saved);
+        UserEntity userEntity = authMapper.toEntity(registerRequest);
+        userEntity.setPasswordHash(passwordEncoder.encode(registerRequest.password()));
+
+        RoleEntity userRole = roleRepository.findByRoleCode("ROLE_CUSTOMER")
+                .orElseThrow(() -> new IllegalStateException("ROLE_CUSTOMER not found"));
+        userEntity.setRole(userRole);
+
+        UserEntity saved = userRepository.save(userEntity);
+
         String token = jwtService.generateToken(userDetails.loadUserByUsername(saved.getEmail()));
 
         return new AuthResponse(token);
@@ -64,21 +65,5 @@ public class AuthService {
         String token = jwtService.generateToken(userDetails);
 
         return new AuthResponse(token);
-    }
-
-    private void assignCustomerRole(CustomerEntity customer) {
-        RoleEntity role = roleRepository.findByRoleCode("ROLE_CUSTOMER")
-                .orElseThrow(() -> new IllegalStateException("ROLE_CUSTOMER not found"));
-
-        CustomerRoleId id = new CustomerRoleId();
-        id.setCustomerId(customer.getId());
-        id.setRoleId(role.getId());
-
-        CustomerRole link = new CustomerRole();
-        link.setId(id);
-        link.setCustomer(customer);
-        link.setRole(role);
-
-        customerRoleRepository.save(link);
     }
 }
