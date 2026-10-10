@@ -11,6 +11,7 @@ import org.korolev.autopartsstore.api.order.exception.OrderNotModifiableExceptio
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -41,6 +42,15 @@ public class CustomExceptionHandler {
         return createResponseEntity(HttpStatus.CONFLICT, "Already exists",
                 ex.getMessage(),
                 Instant.now(), httpServletRequest.getRequestURI());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(
+            AccessDeniedException ex, HttpServletRequest request) {
+        log.warn("Access denied: {}", ex.getMessage());
+        return createResponseEntity(HttpStatus.FORBIDDEN, "Forbidden",
+                "Access denied",
+                Instant.now(), request.getRequestURI());
     }
 
     @ExceptionHandler(AuthenticationException.class)

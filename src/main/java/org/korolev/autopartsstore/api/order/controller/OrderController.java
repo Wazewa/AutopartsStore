@@ -54,11 +54,10 @@ public class OrderController {
             @ApiResponse(responseCode = "200",
                     description = "Заказы клиента успешно отображены (может быть пустой список)")
     })
-    @Operation(summary = "Получить заказ по ID клиента", description = "Возвращает заказ с заданным ID клиента")
-    @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<OrderResponse>> getOrdersByCustomerId(
-            @Parameter(description = "ID клиента", example = "1") @PathVariable Long customerId) {
-        return ResponseEntity.ok(orderService.findOrdersByCustomerId(customerId));
+    @Operation(summary = "Получить мои заказы", description = "Возвращает заказы пользователя")
+    @GetMapping("/me")
+    public ResponseEntity<List<OrderResponse>> getMyOrders() {
+        return ResponseEntity.ok(orderService.findCustomerOrders());
     }
 
     @ApiResponses({

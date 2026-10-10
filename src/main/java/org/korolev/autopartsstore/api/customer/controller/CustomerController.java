@@ -10,12 +10,10 @@ import lombok.AllArgsConstructor;
 import org.korolev.autopartsstore.api.customer.dto.CustomerRequest;
 import org.korolev.autopartsstore.api.customer.dto.CustomerResponse;
 import org.korolev.autopartsstore.api.customer.service.CustomerService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,17 +48,6 @@ public class CustomerController {
     public ResponseEntity<CustomerResponse> getCustomerById(
             @Parameter(description = "ID клиента", example = "1") @PathVariable Long id) {
         return ResponseEntity.ok(customerService.findCustomerById(id));
-    }
-
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Клиент успешно создан"),
-            @ApiResponse(responseCode = "400", description = "Невалидные данные"),
-            @ApiResponse(responseCode = "409", description = "Клиент с заданным email уже есть")
-    })
-    @Operation(summary = "Создать клиента", description = "Создает клиента")
-    @PostMapping
-    public ResponseEntity<CustomerResponse> createCustomer(@Valid @RequestBody CustomerRequest customerRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(customerService.createCustomer(customerRequest));
     }
 
     @ApiResponses({

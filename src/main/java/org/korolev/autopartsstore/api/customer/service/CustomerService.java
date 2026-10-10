@@ -8,6 +8,7 @@ import org.korolev.autopartsstore.api.customer.exception.CustomerAlreadyExistsEx
 import org.korolev.autopartsstore.api.customer.exception.CustomerNotFoundException;
 import org.korolev.autopartsstore.api.customer.mapper.CustomerMapper;
 import org.korolev.autopartsstore.api.customer.repository.CustomerRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ public class CustomerService {
     private final CustomerMapper customerMapper;
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public List<CustomerResponse> findAllCustomers() {
         return customerRepository.findAll().stream()
                 .map(customerMapper::toResponse)
@@ -28,6 +30,7 @@ public class CustomerService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public CustomerResponse findCustomerById(Long id) {
         return customerMapper.toResponse(
                 customerRepository.findById(id)
@@ -37,25 +40,16 @@ public class CustomerService {
     }
 
     @Transactional(readOnly = true)
-    public CustomerEntity findEntityById(Long id) {
-        return customerRepository.findById(id)
+    public CustomerEntity findByEmail(String email) {
+        return customerRepository.findByEmail(email)
                         .orElseThrow(
-                                () -> new CustomerNotFoundException("Customer not found.")
+                                () -> new CustomerNotFoundException("Customer with email" +
+                                        email + " not found")
                         );
     }
 
     @Transactional
-    public CustomerResponse createCustomer(CustomerRequest customerRequest) {
-
-        CustomerEntity customerEntity = customerMapper.toEntity(customerRequest);
-
-        if (customerRepository.existsByEmail(customerEntity.getEmail())) {
-            throw new CustomerAlreadyExistsException("Customer with " + customerEntity.getEmail() + " email already exists.");
-        }
-        return customerMapper.toResponse(customerRepository.save(customerEntity));
-    }
-
-    @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public CustomerResponse updateCustomer(Long id, CustomerRequest customerRequest) {
 
         CustomerEntity customerEntity = customerRepository.findById(id).orElseThrow(
@@ -68,6 +62,7 @@ public class CustomerService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteCustomer(Long id) {
         if(!customerRepository.existsById(id)) {
             throw new CustomerNotFoundException("Customer not found.");

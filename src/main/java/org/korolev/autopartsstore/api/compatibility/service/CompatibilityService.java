@@ -9,6 +9,7 @@ import org.korolev.autopartsstore.api.compatibility.exception.CompatibilityNotFo
 import org.korolev.autopartsstore.api.compatibility.mapper.CompatibilityMapper;
 import org.korolev.autopartsstore.api.compatibility.repository.CompatibilityRepository;
 import org.korolev.autopartsstore.api.product.service.ProductService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +40,7 @@ public class CompatibilityService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public CompatibilityResponse createCompatibility(CompatibilityRequest compatibilityRequest) {
 
         if (compatibilityRequest.yearStart() != null && compatibilityRequest.yearEnd() != null
@@ -54,6 +56,7 @@ public class CompatibilityService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public CompatibilityResponse updateCompatibility(Long id, CompatibilityRequest compatibilityRequest) {
 
         if (compatibilityRequest.yearStart() != null && compatibilityRequest.yearEnd() != null
@@ -73,6 +76,7 @@ public class CompatibilityService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteCompatibility(Long id) {
         if(!compatibilityRepository.existsById(id)) {
             throw new CompatibilityNotFoundException("Compatibility not found.");
