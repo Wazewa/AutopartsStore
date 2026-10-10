@@ -1,4 +1,4 @@
-package org.korolev.autopartsstore.api.exceptions;
+package org.korolev.autopartsstore.api.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
@@ -11,6 +11,7 @@ import org.korolev.autopartsstore.api.order.exception.OrderNotModifiableExceptio
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -40,6 +41,15 @@ public class CustomExceptionHandler {
         return createResponseEntity(HttpStatus.CONFLICT, "Already exists",
                 ex.getMessage(),
                 Instant.now(), httpServletRequest.getRequestURI());
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthenticationException(
+            AuthenticationException ex, HttpServletRequest request) {
+        log.warn("Authentication failed: {}", ex.getMessage());
+        return createResponseEntity(HttpStatus.UNAUTHORIZED, "Unauthorized",
+                "Invalid email or password",
+                Instant.now(), request.getRequestURI());
     }
 
     @ExceptionHandler(CategoryInUseException.class)
