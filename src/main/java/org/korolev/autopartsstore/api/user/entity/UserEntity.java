@@ -50,12 +50,4 @@ public class UserEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable = false)
     private RoleEntity role;
-
-    @OneToMany(mappedBy = "user")
-    @Builder.Default
-    private List<OrderEntity> orders = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user")
-    @Builder.Default
-    private List<EventEntity> events = new ArrayList<>();
 }

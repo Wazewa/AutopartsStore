@@ -2,6 +2,7 @@ package org.korolev.autopartsstore.api.product.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.korolev.autopartsstore.api.cart.entity.CartProductEntity;
 import org.korolev.autopartsstore.api.category.entity.CategoryEntity;
 import org.korolev.autopartsstore.api.compatibility.entity.CompatibilityEntity;
@@ -50,15 +51,4 @@ public class ProductEntity {
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<CompatibilityEntity> compatibilites = new ArrayList<>();
-
-    @OneToMany(mappedBy = "product")
-    @Builder.Default
-    private List<CartProductEntity> cartProductEntities = new ArrayList<>();
-
-    @OneToMany(mappedBy = "product")
-    @Builder.Default
-    private List<OrderProductEntity> orderProductEntities = new ArrayList<>();
 }
