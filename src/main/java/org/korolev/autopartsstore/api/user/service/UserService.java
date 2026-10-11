@@ -1,12 +1,14 @@
 package org.korolev.autopartsstore.api.user.service;
 
 import lombok.AllArgsConstructor;
+import org.korolev.autopartsstore.api.dto.PageResponse;
 import org.korolev.autopartsstore.api.user.dto.UserRequest;
 import org.korolev.autopartsstore.api.user.dto.UserResponse;
 import org.korolev.autopartsstore.api.user.entity.UserEntity;
 import org.korolev.autopartsstore.api.user.exception.UserNotFoundException;
 import org.korolev.autopartsstore.api.user.mapper.UserMapper;
 import org.korolev.autopartsstore.api.user.repository.UserRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,10 +24,8 @@ public class UserService {
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ADMIN')")
-    public List<UserResponse> findAllUsers() {
-        return userRepository.findAll().stream()
-                .map(userMapper::toResponse)
-                .toList();
+    public PageResponse<UserResponse> findAllUsers(Pageable pageable) {
+        return PageResponse.of(userRepository.findAll(pageable), userMapper::toResponse);
     }
 
     @Transactional(readOnly = true)
