@@ -10,6 +10,7 @@ import org.korolev.autopartsstore.api.category.exception.CategoryNotFoundExcepti
 import org.korolev.autopartsstore.api.category.mapper.CategoryMapper;
 import org.korolev.autopartsstore.api.category.repository.CategoryRepository;
 import org.korolev.autopartsstore.api.product.repository.ProductRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +41,7 @@ public class CategoryService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public CategoryResponse createCategory(CategoryRequest categoryRequest) {
 
         CategoryEntity categoryEntity = categoryMapper.toEntity(categoryRequest);
@@ -52,6 +54,7 @@ public class CategoryService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public CategoryResponse updateCategory(Long id, CategoryRequest categoryRequest) {
 
         CategoryEntity categoryEntity = categoryRepository.findById(id).orElseThrow(
@@ -69,6 +72,7 @@ public class CategoryService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteCategory(Long id) {
         if(!categoryRepository.existsById(id)) {
             throw new CategoryNotFoundException("Category not found.");

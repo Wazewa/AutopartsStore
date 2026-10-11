@@ -10,6 +10,7 @@ import org.korolev.autopartsstore.api.cart.exception.CartProductNotFoundExceptio
 import org.korolev.autopartsstore.api.cart.mapper.CartProductMapper;
 import org.korolev.autopartsstore.api.cart.repository.CartProductRepository;
 import org.korolev.autopartsstore.api.product.service.ProductService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +27,10 @@ public class CartProductService {
     private final ProductService productService;
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('CUSTOMER')")
     public List<CartProductResponse> getCartItems(Long cartId) {
+        cartService.requireOwnCart(cartId);
+
         return cartProductRepository.findByCartId(cartId)
                 .stream()
                 .map(cartProductMapper::toResponse)
@@ -34,9 +38,10 @@ public class CartProductService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('CUSTOMER')")
     public CartProductResponse addProductToCart(Long cartId, CartProductRequest cartProductRequest) {
+        CartEntity cartEntity = cartService.requireOwnCart(cartId);
 
-        CartEntity cartEntity = cartService.findEntityById(cartId);
         ProductEntity productEntity = productService.findEntityById(cartProductRequest.productId());
 
         Optional<CartProductEntity> existing = cartProductRepository.findByCartIdAndProductId(
@@ -59,7 +64,10 @@ public class CartProductService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('CUSTOMER')")
     public CartProductResponse updateQuantity(Long cartId, Long productId, Integer quantity) {
+        cartService.requireOwnCart(cartId);
+
         CartProductEntity existing = cartProductRepository.findByCartIdAndProductId(
                 cartId, productId
         ).orElseThrow(
@@ -71,7 +79,10 @@ public class CartProductService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('CUSTOMER')")
     public void removeProductFromCart(Long cartId, Long productId) {
+        cartService.requireOwnCart(cartId);
+
         CartProductEntity existing = cartProductRepository.findByCartIdAndProductId(
                 cartId, productId
         ).orElseThrow(
@@ -81,8 +92,9 @@ public class CartProductService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('CUSTOMER')")
     public void clearCart(Long cartId) {
-        cartService.findEntityById(cartId);
+        cartService.requireOwnCart(cartId);
 
         List<CartProductEntity> items = cartProductRepository.findByCartId(cartId);
         cartProductRepository.deleteAll(items);

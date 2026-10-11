@@ -8,6 +8,6 @@ public record EventResponse(
         Long id,
         EventType eventType,
         Integer sessionId,
-        Long customerId,
+        Long userId,
         Instant eventDate
 ) {}

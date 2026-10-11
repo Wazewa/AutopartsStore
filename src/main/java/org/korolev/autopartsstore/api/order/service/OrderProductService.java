@@ -12,6 +12,7 @@ import org.korolev.autopartsstore.api.order.exception.OrderProductNotFoundExcept
 import org.korolev.autopartsstore.api.order.mapper.OrderProductMapper;
 import org.korolev.autopartsstore.api.product.service.ProductService;
 import org.korolev.autopartsstore.api.order.repository.OrderProductRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,15 +29,18 @@ public class OrderProductService {
     private final OrderProductMapper orderProductMapper;
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('CUSTOMER')")
     public List<OrderProductResponse> findOrderItems(Long orderId) {
+        orderService.requireOwnOrder(orderId);
         return orderProductRepository.findByOrderId(orderId).stream()
                 .map(orderProductMapper::toResponse)
                 .toList();
     }
 
     @Transactional
+    @PreAuthorize("hasRole('CUSTOMER')")
     public OrderProductResponse addProductToOrder(Long orderId, OrderProductRequest orderProductRequest) {
-        OrderEntity orderEntity = orderService.findEntityById(orderId);
+        OrderEntity orderEntity = orderService.requireOwnOrder(orderId);
 
         validateOrderIsModifiable(orderEntity);
 
@@ -62,9 +66,10 @@ public class OrderProductService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('CUSTOMER')")
     public OrderProductResponse updateQuantity(Long orderId, Long productId, Integer quantity) {
 
-        OrderEntity orderEntity = orderService.findEntityById(orderId);
+        OrderEntity orderEntity = orderService.requireOwnOrder(orderId);
         validateOrderIsModifiable(orderEntity);
 
         OrderProductEntity existing = orderProductRepository.findByOrderIdAndProductId(
@@ -78,9 +83,10 @@ public class OrderProductService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('CUSTOMER')")
     public void removeProductFromOrder(Long orderId, Long productId) {
 
-        OrderEntity orderEntity = orderService.findEntityById(orderId);
+        OrderEntity orderEntity = orderService.requireOwnOrder(orderId);
         validateOrderIsModifiable(orderEntity);
 
         OrderProductEntity existing = orderProductRepository.findByOrderIdAndProductId(
@@ -92,9 +98,10 @@ public class OrderProductService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('CUSTOMER')")
     public void clearOrder(Long orderId) {
 
-        OrderEntity orderEntity = orderService.findEntityById(orderId);
+        OrderEntity orderEntity = orderService.requireOwnOrder(orderId);
         validateOrderIsModifiable(orderEntity);
 
         List<OrderProductEntity> items = orderProductRepository.findByOrderId(orderId);

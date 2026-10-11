@@ -6,11 +6,6 @@ import org.korolev.autopartsstore.api.order.entity.PayMethod;
 
 @Schema(description = "Запрос на создание заказа")
 public record OrderRequest (
-    @Schema(description = "ID пользователя", example = "1",
-            requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "Customer id is required")
-    Long customerId,
-
     @Schema(description = "Тип оплаты", example = "CARD",
             requiredMode = Schema.RequiredMode.REQUIRED,
             allowableValues = {"CARD", "ONLINE", "CASH"})

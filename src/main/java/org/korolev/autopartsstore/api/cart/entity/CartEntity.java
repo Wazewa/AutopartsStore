@@ -3,7 +3,7 @@ package org.korolev.autopartsstore.api.cart.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.korolev.autopartsstore.api.customer.entity.CustomerEntity;
+import org.korolev.autopartsstore.api.user.entity.UserEntity;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -32,8 +32,8 @@ public class CartEntity {
     private Instant modifiedDate;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", nullable = false, unique = true)
-    private CustomerEntity customer;
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private UserEntity user;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

@@ -8,6 +8,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface CartMapper {
 
-    @Mapping(target = "customerId", source = "customer.id")
+    @Mapping(target = "userId", source = "user.id")
     CartResponse toResponse(CartEntity cartEntity);
 }

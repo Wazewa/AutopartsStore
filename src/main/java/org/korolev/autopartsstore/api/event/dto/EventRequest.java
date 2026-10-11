@@ -7,10 +7,6 @@ import org.korolev.autopartsstore.api.event.entity.EventType;
 
 @Schema(description = "Запрос на создание события")
 public record EventRequest(
-        @Schema(description = "ID клиента, породившего событие", example = "1",
-                requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-        Long customerId,
-
         @Schema(description = "Тип события", example = "ADD_TO_CART",
                 requiredMode = Schema.RequiredMode.REQUIRED,
                 allowableValues = {

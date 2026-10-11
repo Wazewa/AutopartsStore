@@ -1,13 +1,16 @@
 package org.korolev.autopartsstore.api.cart.service;
 
 import lombok.AllArgsConstructor;
-import org.korolev.autopartsstore.api.customer.service.CustomerService;
+import org.korolev.autopartsstore.api.user.service.UserService;
 import org.korolev.autopartsstore.api.cart.dto.CartResponse;
 import org.korolev.autopartsstore.api.cart.entity.CartEntity;
-import org.korolev.autopartsstore.api.customer.entity.CustomerEntity;
+import org.korolev.autopartsstore.api.user.entity.UserEntity;
 import org.korolev.autopartsstore.api.cart.exception.CartNotFoundException;
 import org.korolev.autopartsstore.api.cart.mapper.CartMapper;
 import org.korolev.autopartsstore.api.cart.repository.CartRepository;
+import org.korolev.autopartsstore.api.security.CurrentUserService;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,9 +22,11 @@ public class CartService {
 
     private final CartRepository cartRepository;
     private final CartMapper cartMapper;
-    private final CustomerService customerService;
+    private final UserService userService;
+    private final CurrentUserService currentUserService;
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public List<CartResponse> findAllCarts() {
         return cartRepository.findAll().stream()
                 .map(cartMapper::toResponse)
@@ -29,6 +34,7 @@ public class CartService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public CartResponse findCartById(Long id) {
         return cartMapper.toResponse(cartRepository.findById(id)
                 .orElseThrow(
@@ -37,15 +43,11 @@ public class CartService {
     }
 
     @Transactional(readOnly = true)
-    public CartEntity findEntityById(Long id) {
-        return cartRepository.findById(id).orElseThrow(
-                () -> new CartNotFoundException("Cart not found.")
-        );
-    }
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public CartResponse findMyCart() {
+        UserEntity user = userService.findByEmail(currentUserService.getEmail());
 
-    @Transactional(readOnly = true)
-    public CartResponse findCartByCustomerId(Long customerId) {
-        CartEntity cartEntity = cartRepository.findByCustomerId(customerId)
+        CartEntity cartEntity = cartRepository.findByUserId(user.getId())
                 .orElseThrow(
                         () -> new CartNotFoundException("Cart not found.")
                 );
@@ -53,24 +55,40 @@ public class CartService {
     }
 
     @Transactional
-    public CartResponse getOrCreateCart(Long customerId) {
-        return cartRepository.findByCustomerId(customerId)
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public CartResponse getOrCreateCart() {
+        UserEntity existUser = userService.findByEmail(currentUserService.getEmail());
+
+        return cartRepository.findByUserId(existUser.getId())
                 .map(cartMapper::toResponse)
                 .orElseGet(() -> {
-                        CustomerEntity customer = customerService.findEntityById(customerId);
-
                         CartEntity cartEntity = CartEntity.builder()
-                                .customer(customer)
+                                .user(existUser)
                                 .build();
                         return cartMapper.toResponse(cartRepository.save(cartEntity));
                 });
     }
 
     @Transactional
-    public void deleteCart(Long id) {
-        if(!cartRepository.existsById(id)) {
-            throw new CartNotFoundException("Cart not found.");
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public void deleteCart() {
+        UserEntity existUser = userService.findByEmail(currentUserService.getEmail());
+
+        CartEntity cart = cartRepository.findByUserId(existUser.getId()).orElseThrow(
+                () -> new CartNotFoundException("Cart not found"));
+
+        cartRepository.delete(cart);
+    }
+
+    @Transactional(readOnly = true)
+    public CartEntity requireOwnCart(Long cartId) {
+        CartEntity cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new CartNotFoundException("Cart not found."));
+
+        if (!cart.getUser().getEmail().equals(currentUserService.getEmail())) {
+            throw new AccessDeniedException("Not your cart");
         }
-        cartRepository.deleteById(id);
+
+        return cart;
     }
 }

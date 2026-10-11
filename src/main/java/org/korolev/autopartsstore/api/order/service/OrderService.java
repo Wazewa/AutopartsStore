@@ -1,15 +1,18 @@
 package org.korolev.autopartsstore.api.order.service;
 
 import lombok.AllArgsConstructor;
-import org.korolev.autopartsstore.api.customer.service.CustomerService;
+import org.korolev.autopartsstore.api.user.entity.UserEntity;
+import org.korolev.autopartsstore.api.user.service.UserService;
 import org.korolev.autopartsstore.api.order.dto.OrderRequest;
 import org.korolev.autopartsstore.api.order.dto.OrderResponse;
-import org.korolev.autopartsstore.api.customer.entity.CustomerEntity;
 import org.korolev.autopartsstore.api.order.entity.OrderEntity;
 import org.korolev.autopartsstore.api.order.entity.OrderStatus;
 import org.korolev.autopartsstore.api.order.exception.OrderNotFoundException;
 import org.korolev.autopartsstore.api.order.mapper.OrderMapper;
 import org.korolev.autopartsstore.api.order.repository.OrderRepository;
+import org.korolev.autopartsstore.api.security.CurrentUserService;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,15 +25,18 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
-    private final CustomerService customerService;
+    private final UserService userService;
+    private final CurrentUserService currentUserService;
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public List<OrderResponse> findAllOrders() {
         return orderRepository.findAll().stream()
                 .map(orderMapper::toResponse)
                 .toList();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional(readOnly = true)
     public OrderResponse findOrderById(Long id) {
         return orderMapper.toResponse(orderRepository.findById(id).orElseThrow(
@@ -39,37 +45,46 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public OrderEntity findEntityById(Long id) {
-        return orderRepository.findById(id).orElseThrow(
-                () -> new OrderNotFoundException("Order not found.")
-        );
-    }
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public List<OrderResponse> findMyOrders() {
+        UserEntity user = userService.findByEmail(currentUserService.getEmail());
 
-    @Transactional(readOnly = true)
-    public List<OrderResponse> findOrdersByCustomerId(Long customerId) {
-        return orderRepository.findByCustomerId(customerId).stream()
+        return orderRepository.findByUserId(user.getId()).stream()
                 .map(orderMapper::toResponse)
                 .toList();
     }
 
     @Transactional
+    @PreAuthorize("hasRole('CUSTOMER')")
     public OrderResponse createOrder(OrderRequest orderRequest) {
 
-        CustomerEntity customerEntity = customerService.findEntityById(orderRequest.customerId());
+        UserEntity userEntity = userService.findByEmail(currentUserService.getEmail());
 
         OrderEntity orderEntity = orderMapper.toEntity(orderRequest);
         orderEntity.setStatus(OrderStatus.PENDING);
-        orderEntity.setCustomer(customerEntity);
+        orderEntity.setUser(userEntity);
         orderEntity.setOrderDate(Instant.now());
 
         return orderMapper.toResponse(orderRepository.save(orderEntity));
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @Transactional
     public void deleteOrderById(Long id) {
-        if(!orderRepository.existsById(id)) {
-            throw new OrderNotFoundException("Order not found.");
+        OrderEntity order = requireOwnOrder(id);
+        orderRepository.delete(order);
+    }
+
+    @Transactional(readOnly = true)
+    public OrderEntity requireOwnOrder(Long id) {
+        OrderEntity order = orderRepository.findById(id).orElseThrow(
+                () -> new OrderNotFoundException("Order not found")
+        );
+
+        if (!order.getUser().getEmail().equals(currentUserService.getEmail())) {
+            throw new AccessDeniedException("Not your order");
         }
-        orderRepository.deleteById(id);
+
+        return order;
     }
 }

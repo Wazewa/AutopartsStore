@@ -53,8 +53,7 @@ public class EventController {
 
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Пользовательское событие успешно создано"),
-            @ApiResponse(responseCode = "400", description = "Невалидные данные"),
-            @ApiResponse(responseCode = "404", description = "Пользователь с заданным ID не найден")
+            @ApiResponse(responseCode = "400", description = "Невалидные данные")
     })
     @Operation(summary = "Создать событие",
             description = "Создает событие. События иммутабельны и не могут быть изменены или удалены")

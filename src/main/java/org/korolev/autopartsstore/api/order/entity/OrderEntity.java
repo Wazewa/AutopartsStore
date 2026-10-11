@@ -2,8 +2,7 @@ package org.korolev.autopartsstore.api.order.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.korolev.autopartsstore.api.admin.entity.AdminEntity;
-import org.korolev.autopartsstore.api.customer.entity.CustomerEntity;
+import org.korolev.autopartsstore.api.user.entity.UserEntity;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -36,12 +35,12 @@ public class OrderEntity {
     private PayMethod payMethod;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", nullable = false)
-    private CustomerEntity customer;
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "processed_by_admin_id")
-    private AdminEntity admin;
+    @JoinColumn(name = "processed_by_user_id")
+    private UserEntity admin;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

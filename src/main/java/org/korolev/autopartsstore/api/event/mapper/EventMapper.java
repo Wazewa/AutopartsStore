@@ -9,10 +9,10 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface EventMapper {
 
-    @Mapping(target = "customerId", source = "customer.id")
+    @Mapping(target = "userId", source = "user.id")
     EventResponse toResponse(EventEntity eventEntity);
 
-    @Mapping(target = "customer", ignore = true)
+    @Mapping(target = "user", ignore = true)
     @Mapping(target = "eventDate", ignore = true)
     EventEntity toEntity(EventRequest eventRequest);
 }

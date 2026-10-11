@@ -8,6 +8,7 @@ import org.korolev.autopartsstore.api.product.exception.ProductAlreadyExistsExce
 import org.korolev.autopartsstore.api.product.exception.ProductNotFoundException;
 import org.korolev.autopartsstore.api.product.mapper.ProductMapper;
 import org.korolev.autopartsstore.api.product.repository.ProductRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +44,7 @@ public class ProductService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public ProductResponse createProduct(ProductRequest productRequest) {
 
         ProductEntity productEntity = productMapper.toEntity(productRequest);
@@ -54,6 +56,7 @@ public class ProductService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public ProductResponse updateProduct(Long id, ProductRequest productRequest) {
 
         ProductEntity productEntity = productRepository.findById(id).orElseThrow(
@@ -72,6 +75,7 @@ public class ProductService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteProduct(Long id) {
         if(!productRepository.existsById(id)) {
             throw new ProductNotFoundException("Product not found.");

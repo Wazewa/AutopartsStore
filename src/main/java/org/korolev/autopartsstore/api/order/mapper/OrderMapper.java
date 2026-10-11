@@ -8,16 +8,13 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface OrderMapper {
-
-    @Mapping(target = "customerId", source = "customer.id")
-    @Mapping(target = "adminId", source = "admin.id")
+    @Mapping(target = "userId", source = "user.id")
     OrderResponse toResponse(OrderEntity orderEntity);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "orderProductEntities", ignore = true)
-    @Mapping(target = "admin", ignore = true)
     @Mapping(target = "status", ignore = true)
-    @Mapping(target = "customer", ignore = true)
+    @Mapping(target = "user", ignore = true)
     @Mapping(target = "orderDate", ignore = true)
     OrderEntity toEntity(OrderRequest orderRequest);
 }
