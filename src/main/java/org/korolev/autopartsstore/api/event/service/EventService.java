@@ -10,6 +10,7 @@ import org.korolev.autopartsstore.api.event.exception.EventNotFoundException;
 import org.korolev.autopartsstore.api.event.mapper.EventMapper;
 import org.korolev.autopartsstore.api.event.repository.EventRepository;
 import org.korolev.autopartsstore.api.security.CurrentUserService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +28,7 @@ public class EventService {
     private final UserService userService;
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public List<EventResponse> findAllEvents() {
         return eventRepository.findAll().stream()
                 .map(eventMapper::toResponse)
@@ -34,6 +36,7 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public EventResponse findEventById(Long id) {
         return eventMapper.toResponse(
                 eventRepository.findById(id)

@@ -49,28 +49,25 @@ public class CartController {
     }
 
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Корзина пользователя с заданным ID успешно найдена"),
-            @ApiResponse(responseCode = "404", description = "Корзина с заданным ID пользователя не найдена")
+            @ApiResponse(responseCode = "200", description = "Корзина пользователя успешно найдена"),
+            @ApiResponse(responseCode = "404", description = "Корзина пользователя не найдена")
     })
-    @Operation(summary = "Получить корзину по ID пользователя",
-            description = "Возвращает корзину по заданному ID пользователя")
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<CartResponse> getCartByUserId(
-            @Parameter(description = "ID пользователя", example = "1") @PathVariable Long userId) {
-        return ResponseEntity.ok(cartService.findCartByUserId(userId));
+    @Operation(summary = "Получить корзину пользователя",
+            description = "Возвращает корзину пользователя")
+    @GetMapping("/user/me")
+    public ResponseEntity<CartResponse> getCartByUserId() {
+        return ResponseEntity.ok(cartService.findMyCart());
     }
 
     @ApiResponses({
             @ApiResponse(responseCode = "201",
-                    description = "Корзина для пользователя с заданным ID успешно создана"),
-            @ApiResponse(responseCode = "404", description = "Пользователь с заданным ID не найден")
+                    description = "Корзина пользователя успешно создана")
     })
-    @Operation(summary = "Создать корзину для пользователя ",
-            description = "Создает корзину для пользователя с заданным ID")
-    @PostMapping("/user/{userId}")
-    public ResponseEntity<CartResponse> getOrCreateCart(
-            @Parameter(description = "ID пользователя", example = "1") @PathVariable Long userId) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(cartService.getOrCreateCart(userId));
+    @Operation(summary = "Создать корзину пользователю",
+            description = "Создает корзину для пользователя")
+    @PostMapping("/user/me")
+    public ResponseEntity<CartResponse> getOrCreateCart() {
+        return ResponseEntity.status(HttpStatus.CREATED).body(cartService.getOrCreateCart());
     }
 
     @ApiResponses({
@@ -79,11 +76,10 @@ public class CartController {
             @ApiResponse(responseCode = "404", description = "Корзина с заданным ID не найдена")
     })
     @Operation(summary = "Удалить корзину",
-            description = "Удаляет корзину по ее ID")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCart(
-            @Parameter(description = "ID корзины", example = "1") @PathVariable Long id) {
-        cartService.deleteCart(id);
+            description = "Удаляет корзину пользователя")
+    @DeleteMapping("/user/me")
+    public ResponseEntity<Void> deleteCart() {
+        cartService.deleteCart();
 
         return ResponseEntity.noContent().build();
     }
