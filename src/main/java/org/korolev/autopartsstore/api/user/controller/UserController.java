@@ -27,14 +27,18 @@ public class UserController {
     private final UserService userService;
 
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Все пользователи успешно отображены")
+            @ApiResponse(responseCode = "200", description = "Все пользователи успешно отображены (с пагинацией)")
     })
-    @Operation(summary = "Получить всех пользователей", description = "Возвращает список всех пользователей")
+    @Operation(summary = "Получить всех пользователей", description = "Возвращает список всех пользователей (с пагинацией))")
     @GetMapping
     public ResponseEntity<PageResponse<UserResponse>> getAllUsers(
+            @Parameter(description = "Номер страницы", example = "0")
             @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Размер страницы", example = "25")
             @RequestParam(defaultValue = "25") int size,
+            @Parameter(description = "Поле сортировки", example = "registeredAt")
             @RequestParam(defaultValue = "id") String sortBy,
+            @Parameter(description = "Направление сортировки", example = "desc")
             @RequestParam(defaultValue = "asc") String direction)
     {
         Pageable pageable = PageableFactory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);

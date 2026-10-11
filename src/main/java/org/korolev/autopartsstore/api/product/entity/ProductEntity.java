@@ -2,15 +2,9 @@ package org.korolev.autopartsstore.api.product.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.BatchSize;
-import org.korolev.autopartsstore.api.cart.entity.CartProductEntity;
 import org.korolev.autopartsstore.api.category.entity.CategoryEntity;
-import org.korolev.autopartsstore.api.compatibility.entity.CompatibilityEntity;
-import org.korolev.autopartsstore.api.order.entity.OrderProductEntity;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
