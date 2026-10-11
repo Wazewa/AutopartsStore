@@ -1,4 +1,4 @@
-# Automagazine API
+# Autoparts Store API
 
 REST API для интернет-магазина автозапчастей.
 
@@ -45,7 +45,7 @@ java -jar target/*.jar --spring.profiles.active=dev
 ## Архитектура
 
 Проект построен по feature-based архитектуре:
-- Каждая фича (`admin/`, `customer/`, `product/`, ...) — самодостаточный пакет
+- Каждая фича (`user/`, `product/`, ...) — самодостаточный пакет
 - Внутри фичи: `controller/`, `service/`, `entity/`, `dto/`, `mapper/`, `repository/`, `exception/`
 - Конфигурация в `config/`
 
@@ -56,12 +56,21 @@ java -jar target/*.jar --spring.profiles.active=dev
 - Swagger UI: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 - OpenAPI JSON: [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
 
+## Конфигурация
+
+| Переменная | Описание | По умолчанию |
+|---|---|---|
+| `JWT_SECRET` | Base64URL-секрет для подписи JWT (≥ 32 байта) | — (обязательно) |
+| `JWT_ACCESS_TTL` | Время жизни access-токена (мс) | `900000` (15 мин) |
+| `POSTGRES_DB` | Имя БД | `autopartsstore` |
+| `POSTGRES_USER` | Пользователь БД | `postgres` |
+| `POSTGRES_PASSWORD` | Пароль БД | — |
+
 ## Основные endpoints
 
 | Ресурс | URL |
 |--------|-----|
-| Admins | `/api/admins` |
-| Customers | `/api/customers` |
+| Users | `/api/users` |
 | Products | `/api/products` |
 | Categories | `/api/categories` |
 | Compatibilities | `/api/compatibilities` |
@@ -70,6 +79,24 @@ java -jar target/*.jar --spring.profiles.active=dev
 | Cart Items | `/api/carts/{cartId}/items` |
 | Orders | `/api/orders` |
 | Order Items | `/api/orders/{orderId}/items` |
+
+## Безопасность
+
+- **JWT-аутентификация** (HS256, access-токен 15 мин).
+- **Ролевая модель**: `ROLE_ADMIN`, `ROLE_CUSTOMER`.
+- **Method-level security** — `@PreAuthorize` на сервисном слое.
+- **Owner-check** — клиент видит/меняет только свои ресурсы
+  (`requireOwnOrder`, `requireOwnCart`).
+- **Пароли** — BCrypt.
+- **Публичные эндпоинты**: `/api/auth/**`, `GET /api/products/**`,
+  `GET /api/categories/**`, `GET /api/compatibilities/**`,
+  `POST /api/events`, Swagger.
+
+### Как авторизоваться в Swagger
+
+1. `POST /api/auth/login` → получить токен.
+2. Кнопка **Authorize** → вставить токен **без** префикса `Bearer`.
+3. Теперь защищённые эндпоинты доступны.
 
 ## Тестирование
 
@@ -80,4 +107,4 @@ java -jar target/*.jar --spring.profiles.active=dev
 
 ### Postman
 
-Postman коллекция: `postman/Automagazine.postman_collection.json` (в разработке)
+Коллекция в разработке. Примеры запросов — в Swagger UI.
