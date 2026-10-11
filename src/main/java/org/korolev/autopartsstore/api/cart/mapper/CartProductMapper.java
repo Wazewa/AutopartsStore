@@ -9,7 +9,6 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface CartProductMapper {
-
     @Mapping(target = "productId", source = "product.id")
     CartProductResponse toResponse(CartProductEntity cartProductEntity);
 

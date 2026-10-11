@@ -6,8 +6,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.korolev.autopartsstore.api.user.entity.UserEntity;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -34,8 +32,4 @@ public class CartEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private UserEntity user;
-
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<CartProductEntity> cartProductEntities = new ArrayList<>();
 }

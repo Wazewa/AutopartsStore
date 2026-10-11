@@ -12,9 +12,9 @@ public interface OrderMapper {
     OrderResponse toResponse(OrderEntity orderEntity);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "orderProductEntities", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "user", ignore = true)
+    @Mapping(target = "admin", ignore = true)
     @Mapping(target = "orderDate", ignore = true)
     OrderEntity toEntity(OrderRequest orderRequest);
 }

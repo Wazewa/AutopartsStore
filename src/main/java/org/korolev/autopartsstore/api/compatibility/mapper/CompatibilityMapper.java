@@ -9,7 +9,6 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface CompatibilityMapper {
-
     @Mapping(target = "productId", source = "product.id")
     CompatibilityResponse toResponse(CompatibilityEntity compatibilityEntity);
 

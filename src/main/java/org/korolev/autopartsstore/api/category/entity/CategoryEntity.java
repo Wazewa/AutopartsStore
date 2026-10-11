@@ -26,8 +26,4 @@ public class CategoryEntity {
 
     @Column(name = "description_category")
     private String description;
-
-    @Builder.Default
-    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
-    private List<ProductEntity> products = new ArrayList<>();
 }
