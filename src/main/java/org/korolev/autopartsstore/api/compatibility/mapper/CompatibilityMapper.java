@@ -13,8 +13,10 @@ public interface CompatibilityMapper {
     CompatibilityResponse toResponse(CompatibilityEntity compatibilityEntity);
 
     @Mapping(target = "product", ignore = true)
+    @Mapping(target = "id", ignore = true)
     CompatibilityEntity toEntity(CompatibilityRequest compatibilityRequest);
 
     @Mapping(target = "product", ignore = true)
+    @Mapping(target = "id", ignore = true)
     void updateEntity(CompatibilityRequest compatibilityRequest, @MappingTarget CompatibilityEntity compatibilityEntity);
 }

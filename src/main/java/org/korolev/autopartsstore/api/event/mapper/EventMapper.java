@@ -13,6 +13,7 @@ public interface EventMapper {
     EventResponse toResponse(EventEntity eventEntity);
 
     @Mapping(target = "user", ignore = true)
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "eventDate", ignore = true)
     EventEntity toEntity(EventRequest eventRequest);
 }

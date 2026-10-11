@@ -10,12 +10,13 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface ProductMapper {
-    @Mapping(target = "category", ignore = true)
     ProductResponse toResponse(ProductEntity productEntity);
 
     @Mapping(target = "category", ignore = true)
+    @Mapping(target = "id", ignore = true)
     ProductEntity toEntity(ProductRequest productRequest);
 
     @Mapping(target = "category", ignore = true)
+    @Mapping(target = "id", ignore = true)
     void updateEntity(ProductRequest productRequest, @MappingTarget ProductEntity productEntity);
 }
