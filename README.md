@@ -108,3 +108,12 @@ java -jar target/*.jar --spring.profiles.active=dev
 ### Postman
 
 Коллекция в разработке. Примеры запросов — в Swagger UI.
+
+## Дальнейшее развитие
+
+- Event-driven аналитика (Kafka + ClickHouse + Grafana).
+- Микросервисная архитектура (Gateway, Eureka, Saga, Outbox).
+- Пагинация/фильтрация/сортировка.
+- Тесты (unit + integration).
+- CI/CD (GitHub Actions).
+- Frontend (React + Vite).
