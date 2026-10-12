@@ -35,7 +35,7 @@ public final class ProductSpecifications {
                 predicates.add(cb.lessThanOrEqualTo(root.get("price"), productFilter.priceTo()));
             }
             if (Boolean.TRUE.equals(productFilter.inStock())) {
-                predicates.add(cb.greaterThan(root.get("quantity"), 0));
+                predicates.add(cb.greaterThanOrEqualTo(root.get("quantity"), 0));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
