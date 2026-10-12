@@ -39,7 +39,7 @@ public class CartController {
             @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Размер страницы", example = "25")
             @RequestParam(defaultValue = "25") int size,
-            @Parameter(description = "Поле сортировки", example = "yearStart")
+            @Parameter(description = "Поле сортировки", example = "createdDate")
             @RequestParam(defaultValue = "id") String sortBy,
             @Parameter(description = "Направление сортировки", example = "desc")
             @RequestParam(defaultValue = "asc") String direction)
