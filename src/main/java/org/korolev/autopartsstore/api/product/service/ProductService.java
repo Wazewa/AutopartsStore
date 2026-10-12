@@ -1,6 +1,7 @@
 package org.korolev.autopartsstore.api.product.service;
 
 import lombok.AllArgsConstructor;
+import org.korolev.autopartsstore.api.dto.PageResponse;
 import org.korolev.autopartsstore.api.product.dto.ProductRequest;
 import org.korolev.autopartsstore.api.product.dto.ProductResponse;
 import org.korolev.autopartsstore.api.product.entity.ProductEntity;
@@ -12,7 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @AllArgsConstructor
@@ -21,10 +22,8 @@ public class ProductService {
     private final ProductMapper productMapper;
 
     @Transactional(readOnly = true)
-    public List<ProductResponse> findAllProducts() {
-        return productRepository.findAll().stream()
-                .map(productMapper::toResponse)
-                .toList();
+    public PageResponse<ProductResponse> findAllProducts(Pageable pageable) {
+        return PageResponse.of(productRepository.findAll(pageable), productMapper::toResponse);
     }
 
     @Transactional(readOnly = true)

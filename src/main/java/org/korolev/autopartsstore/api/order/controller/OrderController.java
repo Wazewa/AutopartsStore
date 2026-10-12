@@ -7,36 +7,45 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.korolev.autopartsstore.api.dto.PageResponse;
+import org.korolev.autopartsstore.api.factory.PageableFactory;
 import org.korolev.autopartsstore.api.order.dto.OrderRequest;
 import org.korolev.autopartsstore.api.order.dto.OrderResponse;
 import org.korolev.autopartsstore.api.order.service.OrderService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @Tag(name = "Orders", description = "Управление заказами")
 @RequestMapping("/api/orders")
 @AllArgsConstructor
 public class OrderController {
+    private static final Set<String> ALLOWED_SORT_FIELDS =
+            Set.of("id", "orderDate", "status", "payMethod");
 
     private final OrderService orderService;
 
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Все заказы успешно отображены")
+            @ApiResponse(responseCode = "200", description = "Все заказы успешно отображены (с пагинацией)")
     })
-    @Operation(summary = "Получить все заказы", description = "Возвращает все заказы")
+    @Operation(summary = "Получить все заказы", description = "Возвращает все заказы (с пагинацией)")
     @GetMapping
-    public ResponseEntity<List<OrderResponse>> getAllOrders() {
-        return ResponseEntity.ok(orderService.findAllOrders());
+    public ResponseEntity<PageResponse<OrderResponse>> getAllOrders(
+            @Parameter(description = "Номер страницы", example = "0")
+            @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Размер страницы", example = "25")
+            @RequestParam(defaultValue = "25") int size,
+            @Parameter(description = "Поле сортировки", example = "orderDate")
+            @RequestParam(defaultValue = "id") String sortBy,
+            @Parameter(description = "Направление сортировки", example = "desc")
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        Pageable pageable = PageableFactory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
+        return ResponseEntity.ok(orderService.findAllOrders(pageable));
     }
 
     @ApiResponses({
@@ -56,8 +65,18 @@ public class OrderController {
     })
     @Operation(summary = "Получить мои заказы", description = "Возвращает заказы пользователя")
     @GetMapping("/me")
-    public ResponseEntity<List<OrderResponse>> getMyOrders() {
-        return ResponseEntity.ok(orderService.findMyOrders());
+public ResponseEntity<PageResponse<OrderResponse>> getMyOrders(
+          @Parameter(description = "Номер страницы", example = "0")
+          @RequestParam(defaultValue = "0") int page,
+          @Parameter(description = "Размер страницы", example = "25")
+          @RequestParam(defaultValue = "25") int size,
+          @Parameter(description = "Поле сортировки", example = "orderDate")
+          @RequestParam(defaultValue = "id") String sortBy,
+          @Parameter(description = "Направление сортировки", example = "desc")
+          @RequestParam(defaultValue = "asc") String direction)
+    {
+        Pageable pageable = PageableFactory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
+        return ResponseEntity.ok(orderService.findMyOrders(pageable));
     }
 
     @ApiResponses({

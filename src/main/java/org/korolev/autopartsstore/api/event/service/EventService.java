@@ -1,6 +1,7 @@
 package org.korolev.autopartsstore.api.event.service;
 
 import lombok.AllArgsConstructor;
+import org.korolev.autopartsstore.api.dto.PageResponse;
 import org.korolev.autopartsstore.api.user.entity.UserEntity;
 import org.korolev.autopartsstore.api.user.service.UserService;
 import org.korolev.autopartsstore.api.event.dto.EventRequest;
@@ -9,7 +10,7 @@ import org.korolev.autopartsstore.api.event.entity.EventEntity;
 import org.korolev.autopartsstore.api.event.exception.EventNotFoundException;
 import org.korolev.autopartsstore.api.event.mapper.EventMapper;
 import org.korolev.autopartsstore.api.event.repository.EventRepository;
-import org.korolev.autopartsstore.api.security.CurrentUserService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,7 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -29,10 +29,8 @@ public class EventService {
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ADMIN')")
-    public List<EventResponse> findAllEvents() {
-        return eventRepository.findAll().stream()
-                .map(eventMapper::toResponse)
-                .toList();
+    public PageResponse<EventResponse> findAllEvents(Pageable pageable) {
+        return PageResponse.of(eventRepository.findAll(pageable), (eventMapper::toResponse));
     }
 
     @Transactional(readOnly = true)

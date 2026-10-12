@@ -9,8 +9,7 @@ import org.mapstruct.Mapping;
 public interface AuthMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "registeredAt", ignore = true)
-    @Mapping(target = "orders", ignore = true)
-    @Mapping(target = "events", ignore = true)
+    @Mapping(target = "role", ignore = true)
     @Mapping(target = "passwordHash", ignore = true)
     UserEntity toEntity(RegisterRequest registerRequest);
 }

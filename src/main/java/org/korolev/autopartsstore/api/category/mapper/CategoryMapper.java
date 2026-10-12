@@ -9,12 +9,11 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {
-
     CategoryResponse toResponse(CategoryEntity categoryEntity);
 
-    @Mapping(target = "products", ignore = true)
+    @Mapping(target = "id", ignore = true)
     CategoryEntity toEntity(CategoryRequest categoryRequest);
 
-    @Mapping(target = "products", ignore = true)
+    @Mapping(target = "id", ignore = true)
     void updateEntity(CategoryRequest categoryRequest, @MappingTarget CategoryEntity categoryEntity);
 }
