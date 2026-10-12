@@ -2,6 +2,7 @@ package org.korolev.autopartsstore.api.product.service;
 
 import lombok.AllArgsConstructor;
 import org.korolev.autopartsstore.api.dto.PageResponse;
+import org.korolev.autopartsstore.api.product.dto.ProductFilter;
 import org.korolev.autopartsstore.api.product.dto.ProductRequest;
 import org.korolev.autopartsstore.api.product.dto.ProductResponse;
 import org.korolev.autopartsstore.api.product.entity.ProductEntity;
@@ -9,11 +10,12 @@ import org.korolev.autopartsstore.api.product.exception.ProductAlreadyExistsExce
 import org.korolev.autopartsstore.api.product.exception.ProductNotFoundException;
 import org.korolev.autopartsstore.api.product.mapper.ProductMapper;
 import org.korolev.autopartsstore.api.product.repository.ProductRepository;
+import org.korolev.autopartsstore.api.product.util.ProductSpecifications;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.springframework.data.domain.Pageable;
 
 @Service
 @AllArgsConstructor
@@ -22,8 +24,9 @@ public class ProductService {
     private final ProductMapper productMapper;
 
     @Transactional(readOnly = true)
-    public PageResponse<ProductResponse> findAllProducts(Pageable pageable) {
-        return PageResponse.of(productRepository.findAll(pageable), productMapper::toResponse);
+    public PageResponse<ProductResponse> findAllProducts(Pageable pageable, ProductFilter productFilter) {
+        Specification<ProductEntity> spec = ProductSpecifications.from(productFilter);
+        return PageResponse.of(productRepository.findAll(spec, pageable), productMapper::toResponse);
     }
 
     @Transactional(readOnly = true)
