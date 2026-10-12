@@ -4,16 +4,16 @@ import lombok.AllArgsConstructor;
 import org.korolev.autopartsstore.api.compatibility.dto.CompatibilityRequest;
 import org.korolev.autopartsstore.api.compatibility.dto.CompatibilityResponse;
 import org.korolev.autopartsstore.api.compatibility.entity.CompatibilityEntity;
+import org.korolev.autopartsstore.api.dto.PageResponse;
 import org.korolev.autopartsstore.api.product.entity.ProductEntity;
 import org.korolev.autopartsstore.api.compatibility.exception.CompatibilityNotFoundException;
 import org.korolev.autopartsstore.api.compatibility.mapper.CompatibilityMapper;
 import org.korolev.autopartsstore.api.compatibility.repository.CompatibilityRepository;
 import org.korolev.autopartsstore.api.product.service.ProductService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -24,10 +24,8 @@ public class CompatibilityService {
     private final ProductService productService;
 
     @Transactional(readOnly = true)
-    public List<CompatibilityResponse> findAllCompatibilities() {
-        return compatibilityRepository.findAll().stream()
-                .map(compatibilityMapper::toResponse)
-                .toList();
+    public PageResponse<CompatibilityResponse> findAllCompatibilities(Pageable pageable) {
+        return PageResponse.of(compatibilityRepository.findAll(pageable), (compatibilityMapper::toResponse));
     }
 
     @Transactional(readOnly = true)
