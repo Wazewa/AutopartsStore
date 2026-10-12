@@ -1,5 +1,6 @@
 package org.korolev.autopartsstore.api.cart.repository;
 
+import java.util.List;
 import java.util.Optional;
 import org.korolev.autopartsstore.api.cart.entity.CartEntity;
 import org.springframework.data.domain.Page;
