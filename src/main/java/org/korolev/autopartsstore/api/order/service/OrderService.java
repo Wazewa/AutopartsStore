@@ -1,6 +1,7 @@
 package org.korolev.autopartsstore.api.order.service;
 
 import lombok.AllArgsConstructor;
+import org.korolev.autopartsstore.api.dto.PageResponse;
 import org.korolev.autopartsstore.api.user.entity.UserEntity;
 import org.korolev.autopartsstore.api.user.service.UserService;
 import org.korolev.autopartsstore.api.order.dto.OrderRequest;
@@ -11,13 +12,13 @@ import org.korolev.autopartsstore.api.order.exception.OrderNotFoundException;
 import org.korolev.autopartsstore.api.order.mapper.OrderMapper;
 import org.korolev.autopartsstore.api.order.repository.OrderRepository;
 import org.korolev.autopartsstore.api.security.CurrentUserService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -30,10 +31,8 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ADMIN')")
-    public List<OrderResponse> findAllOrders() {
-        return orderRepository.findAll().stream()
-                .map(orderMapper::toResponse)
-                .toList();
+    public PageResponse<OrderResponse> findAllOrders(Pageable pageable) {
+        return PageResponse.of(orderRepository.findAll(pageable), orderMapper::toResponse);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -46,12 +45,10 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('CUSTOMER')")
-    public List<OrderResponse> findMyOrders() {
+    public PageResponse<OrderResponse> findMyOrders(Pageable pageable) {
         UserEntity user = userService.findByEmail(currentUserService.getEmail());
 
-        return orderRepository.findByUserId(user.getId()).stream()
-                .map(orderMapper::toResponse)
-                .toList();
+        return PageResponse.of(orderRepository.findByUserId(user.getId(), pageable), orderMapper::toResponse);
     }
 
     @Transactional
