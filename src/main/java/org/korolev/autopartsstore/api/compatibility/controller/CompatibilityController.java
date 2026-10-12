@@ -43,7 +43,7 @@ public class CompatibilityController {
             @RequestParam(defaultValue = "25") int size,
             @Parameter(description = "Поле сортировки", example = "yearStart")
             @RequestParam(defaultValue = "id") String sortBy,
-            @Parameter(description = "Направление сортировки", example = "brand")
+            @Parameter(description = "Направление сортировки", example = "desc")
             @RequestParam(defaultValue = "asc") String direction)
     {
         Pageable pageable = PageableFactory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);

@@ -1,6 +1,7 @@
 package org.korolev.autopartsstore.api.cart.service;
 
 import lombok.AllArgsConstructor;
+import org.korolev.autopartsstore.api.dto.PageResponse;
 import org.korolev.autopartsstore.api.user.service.UserService;
 import org.korolev.autopartsstore.api.cart.dto.CartResponse;
 import org.korolev.autopartsstore.api.cart.entity.CartEntity;
@@ -9,12 +10,11 @@ import org.korolev.autopartsstore.api.cart.exception.CartNotFoundException;
 import org.korolev.autopartsstore.api.cart.mapper.CartMapper;
 import org.korolev.autopartsstore.api.cart.repository.CartRepository;
 import org.korolev.autopartsstore.api.security.CurrentUserService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -27,10 +27,8 @@ public class CartService {
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ADMIN')")
-    public List<CartResponse> findAllCarts() {
-        return cartRepository.findAll().stream()
-                .map(cartMapper::toResponse)
-                .toList();
+    public PageResponse<CartResponse> findAllCarts(Pageable pageable) {
+        return PageResponse.of(cartRepository.findAll(pageable), (cartMapper::toResponse));
     }
 
     @Transactional(readOnly = true)
