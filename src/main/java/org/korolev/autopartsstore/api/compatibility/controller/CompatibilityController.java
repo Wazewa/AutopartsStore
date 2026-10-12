@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.korolev.autopartsstore.api.compatibility.dto.CompatibilityFilter;
 import org.korolev.autopartsstore.api.compatibility.dto.CompatibilityRequest;
 import org.korolev.autopartsstore.api.compatibility.dto.CompatibilityResponse;
 import org.korolev.autopartsstore.api.compatibility.service.CompatibilityService;
@@ -31,10 +32,11 @@ public class CompatibilityController {
     private final CompatibilityService compatibilityService;
 
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Совместимости успешно отображены (с пагинацией)")
+            @ApiResponse(responseCode = "200", description = "Совместимости успешно отображены " +
+                    "(с пагинацией, сортировкой и фильтрацией)")
     })
     @Operation(summary = "Получить все совместимости", description = "Возвращает все совместимости с " +
-            "товарами (с пагинацией)")
+            "товарами (с пагинацией, сортировкой и фильтрацией)")
     @GetMapping
     public ResponseEntity<PageResponse<CompatibilityResponse>> getAllCompatibilities(
             @Parameter(description = "Номер страницы", example = "0")
@@ -44,10 +46,20 @@ public class CompatibilityController {
             @Parameter(description = "Поле сортировки", example = "yearStart")
             @RequestParam(defaultValue = "id") String sortBy,
             @Parameter(description = "Направление сортировки", example = "desc")
-            @RequestParam(defaultValue = "asc") String direction)
+            @RequestParam(defaultValue = "asc") String direction,
+            @Parameter(description = "Фильтр бренда", example = "BMW")
+            @RequestParam(required = false) String brand,
+            @Parameter(description = "Фильтр модели", example = "X5")
+            @RequestParam(required = false) String model,
+            @Parameter(description = "Год выпуска", example = "2002")
+            @RequestParam(required = false) Integer year,
+            @Parameter(description = "Фильтр ID продукта", example = "1")
+            @RequestParam(required = false) Long productId)
     {
+        CompatibilityFilter compatibilityFilter = new CompatibilityFilter(brand, model, year, productId);
+
         Pageable pageable = PageableFactory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
-        return ResponseEntity.ok(compatibilityService.findAllCompatibilities(pageable));
+        return ResponseEntity.ok(compatibilityService.findAllCompatibilities(pageable, compatibilityFilter));
     }
 
     @ApiResponses({
