@@ -48,19 +48,14 @@ public class ProductService {
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public ProductResponse createProduct(ProductRequest productRequest) {
-
         ProductEntity productEntity = productMapper.toEntity(productRequest);
 
-        if(productRequest.article() != null && productRepository.existsByArticle(productEntity.getArticle()))  {
-            throw new ProductAlreadyExistsException("Product already exists.");
-        }
         return productMapper.toResponse(productRepository.save(productEntity));
     }
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public ProductResponse updateProduct(Long id, ProductRequest productRequest) {
-
         ProductEntity productEntity = productRepository.findById(id).orElseThrow(
                 () -> new ProductNotFoundException("Product not found.")
         );

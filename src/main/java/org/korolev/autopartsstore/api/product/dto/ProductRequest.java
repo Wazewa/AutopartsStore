@@ -39,10 +39,5 @@ public record ProductRequest(
         @Schema(description = "Бренд товара", example = "PEMCO",
                 requiredMode = Schema.RequiredMode.NOT_REQUIRED)
         @Size(max = 100, message = "Brand must be less than 100 characters")
-        String brand,
-
-        @Schema(description = "Комментарий к товару", example = "Лежит слева от кассы",
-                requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-        @Size(max = 512, message = "Comment must be less than 512 characters")
-        String comment
+        String brand
 ) {}
