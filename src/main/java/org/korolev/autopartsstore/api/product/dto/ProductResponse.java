@@ -9,7 +9,6 @@ public record ProductResponse(
         String article,
         Integer quantity,
         String imageUrl,
-        String brand,
-        String comment
+        String brand
 ) {}
 
