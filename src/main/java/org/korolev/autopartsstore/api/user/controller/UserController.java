@@ -27,9 +27,11 @@ public class UserController {
     private final UserService userService;
 
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Все пользователи успешно отображены (с пагинацией)")
+            @ApiResponse(responseCode = "200", description = "Все пользователи успешно отображены (с пагинацией)"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещен")
     })
-    @Operation(summary = "Получить всех пользователей", description = "Возвращает список всех пользователей (с пагинацией))")
+    @Operation(summary = "Получить всех пользователей", description = "Возвращает список всех " +
+            "пользователей (с пагинацией))")
     @GetMapping
     public ResponseEntity<PageResponse<UserResponse>> getAllUsers(
             @Parameter(description = "Номер страницы", example = "0")
@@ -47,6 +49,7 @@ public class UserController {
 
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Пользователь с заданным ID успешно отображен"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
             @ApiResponse(responseCode = "404", description = "Пользователь с заданным ID не найден")
     })
     @Operation(summary = "Получить пользователя по ID", description = "Возвращает пользователя по ID")

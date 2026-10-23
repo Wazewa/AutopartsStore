@@ -31,6 +31,10 @@ public class OrderEntity {
     @Column(name = "pay_method", length = 20, nullable = false)
     private PayMethod payMethod;
 
+    @Version
+    @Column(name = "version", nullable = false)
+    private Long version;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;

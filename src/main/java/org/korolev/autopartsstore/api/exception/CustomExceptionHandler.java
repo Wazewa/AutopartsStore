@@ -9,6 +9,7 @@ import org.korolev.autopartsstore.api.dto.ErrorResponse;
 import org.korolev.autopartsstore.api.dto.ValidationErrorResponse;
 import org.korolev.autopartsstore.api.order.exception.OrderNotModifiableException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -123,6 +124,14 @@ public class CustomExceptionHandler {
         log.warn("Order not modifiable: {}", ex.getMessage());
         return createResponseEntity(HttpStatus.CONFLICT, "Conflict",
                 ex.getMessage(), Instant.now(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(OptimisticLockingFailureException.class)
+    public ResponseEntity<ErrorResponse> handleOptimisticLock(OptimisticLockingFailureException ex, HttpServletRequest request) {
+        log.warn("Optimistic lock failure at {}", request.getRequestURI());
+        return createResponseEntity(HttpStatus.CONFLICT, "Conflict",
+                "Data was modified by another transaction. Please refresh and try again.",
+                Instant.now(), request.getRequestURI());
     }
 
     @ExceptionHandler(NoResourceFoundException.class)

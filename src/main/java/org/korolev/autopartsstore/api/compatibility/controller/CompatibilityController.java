@@ -76,7 +76,8 @@ public class CompatibilityController {
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Совместимость успешно создана"),
             @ApiResponse(responseCode = "400", description = "Невалидные данные (например, yearStart > yearEnd)"),
-            @ApiResponse(responseCode = "404", description = "Товар с заданным ID не найден")
+            @ApiResponse(responseCode = "404", description = "Товар с заданным ID не найден"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещен")
     })
     @Operation(summary = "Создать совместимость", description = "Создает совместимость с товарами")
     @PostMapping
@@ -89,7 +90,8 @@ public class CompatibilityController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Совместимость успешно обновлена"),
             @ApiResponse(responseCode = "400", description = "Невалидные данные (например, yearStart > yearEnd)"),
-            @ApiResponse(responseCode = "404", description = "Товар или совместимость с заданным ID не найдена")
+            @ApiResponse(responseCode = "404", description = "Товар или совместимость с заданным ID не найдена"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещен")
     })
     @Operation(summary = "Обновить совместимость по ID", description = "Обновляет совместимость с товарами")
     @PutMapping("/{id}")
@@ -102,6 +104,7 @@ public class CompatibilityController {
 
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Совместимость успешно удалена"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
             @ApiResponse(responseCode = "404", description = "Совместимость с заданным ID не найдена")
     })
     @Operation(summary = "Удалить совместимость по ID", description = "Удаляет совместимость с товарами")

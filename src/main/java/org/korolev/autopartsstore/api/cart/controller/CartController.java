@@ -29,9 +29,10 @@ public class CartController {
 
     private final CartService cartService;
 
-    @ApiResponses(
-            @ApiResponse(responseCode = "200", description = "Все пользовательские корзины были отображены")
-    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Все пользовательские корзины были отображены"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещен")
+    })
     @Operation(summary = "Получить все корзины", description = "Возвращает список всех пользовательских корзин")
     @GetMapping
     public ResponseEntity<PageResponse<CartResponse>> getAllCarts(
@@ -50,6 +51,7 @@ public class CartController {
 
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Корзина с заданным ID успешно найдена"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
             @ApiResponse(responseCode = "404", description = "Корзина с заданным ID не найдена")
     })
     @Operation(summary = "Получить корзину по ID",

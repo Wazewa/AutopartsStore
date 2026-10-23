@@ -29,10 +29,11 @@ public class EventController {
 
     private final EventService eventService;
 
-    @ApiResponses(
+    @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Все пользовательские события " +
-                    "успешно отображены (с пагинацией)")
-    )
+                    "успешно отображены (с пагинацией)"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещен")
+    })
     @Operation(summary = "Получить все события", description = "Возвращает все пользовательские " +
             "события (с пагинацией)")
     @GetMapping
@@ -53,6 +54,7 @@ public class EventController {
     @ApiResponses({
             @ApiResponse(responseCode = "200",
                     description = "Пользовательское событие с заданным ID успешно отображено"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
             @ApiResponse(responseCode = "404", description = "Событие с заданным ID не найдено")
     })
     @Operation(summary = "Получить событие по ID",
