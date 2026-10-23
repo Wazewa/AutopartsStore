@@ -9,14 +9,20 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.korolev.autopartsstore.api.dto.PageResponse;
 import org.korolev.autopartsstore.api.factory.PageableFactory;
+import org.korolev.autopartsstore.api.order.dto.OrderFilter;
 import org.korolev.autopartsstore.api.order.dto.OrderRequest;
 import org.korolev.autopartsstore.api.order.dto.OrderResponse;
+import org.korolev.autopartsstore.api.order.dto.UpdateOrderStatusRequest;
+import org.korolev.autopartsstore.api.order.entity.OrderStatus;
 import org.korolev.autopartsstore.api.order.service.OrderService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Set;
 
 @RestController
@@ -30,7 +36,8 @@ public class OrderController {
     private final OrderService orderService;
 
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Все заказы успешно отображены (с пагинацией)")
+            @ApiResponse(responseCode = "200", description = "Все заказы успешно отображены (с пагинацией)"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещен")
     })
     @Operation(summary = "Получить все заказы", description = "Возвращает все заказы (с пагинацией)")
     @GetMapping
@@ -42,14 +49,25 @@ public class OrderController {
             @Parameter(description = "Поле сортировки", example = "orderDate")
             @RequestParam(defaultValue = "id") String sortBy,
             @Parameter(description = "Направление сортировки", example = "desc")
-            @RequestParam(defaultValue = "asc") String direction
+            @RequestParam(defaultValue = "asc") String direction,
+            @Parameter(description = "Фильтр статусов", example = "PROCESSING")
+            @RequestParam(required = false) OrderStatus status,
+            @Parameter(description = "Фильтр даты до")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            @RequestParam(required = false) Instant dateFrom,
+            @Parameter(description = "Фильтр даты по")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            @RequestParam(required = false) Instant dateTo
     ) {
-        Pageable pageable = PageableFactory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
-        return ResponseEntity.ok(orderService.findAllOrders(pageable));
+        OrderFilter orderFilter = new OrderFilter(status, dateFrom, dateTo);
+
+        return ResponseEntity.ok(orderService.findAllOrders(PageableFactory.create(page, size,
+                sortBy, direction, ALLOWED_SORT_FIELDS), orderFilter));
     }
 
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Заказ с заданным ID успешно отображен"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
             @ApiResponse(responseCode = "404", description = "Заказ с заданным ID не найден")
     })
     @Operation(summary = "Получить заказ по ID", description = "Возвращает заказ с заданным ID")
@@ -81,6 +99,7 @@ public ResponseEntity<PageResponse<OrderResponse>> getMyOrders(
 
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Заказ успешно создан"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
             @ApiResponse(responseCode = "404", description = "Клиент с заданным ID не найден"),
             @ApiResponse(responseCode = "400", description = "Невалидные данные")
     })
@@ -88,6 +107,20 @@ public ResponseEntity<PageResponse<OrderResponse>> getMyOrders(
     @PostMapping
     public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody OrderRequest orderRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(orderRequest));
+    }
+
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Заказ успешно создан"),
+            @ApiResponse(responseCode = "404", description = "Заказ с заданным ID не найден"),
+            @ApiResponse(responseCode = "409", description = "Заказ невозможно перевести в заданное состояние"),
+            @ApiResponse(responseCode = "400", description = "Невалидные данные")
+    })
+    @Operation(summary = "Обновить статус заказа", description = "Обновляет статус заказа по заданному ID заказа")
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<OrderResponse> updateOrderStatus(
+            @Parameter(description = "ID заказа", example = "1") @PathVariable Long id,
+            @RequestBody @Valid UpdateOrderStatusRequest request) {
+        return ResponseEntity.ok(orderService.updateOrderStatus(id, request.event()));
     }
 
     @ApiResponses({

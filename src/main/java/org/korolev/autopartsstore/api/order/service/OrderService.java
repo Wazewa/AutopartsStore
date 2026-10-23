@@ -2,6 +2,10 @@ package org.korolev.autopartsstore.api.order.service;
 
 import lombok.AllArgsConstructor;
 import org.korolev.autopartsstore.api.dto.PageResponse;
+import org.korolev.autopartsstore.api.order.dto.OrderFilter;
+import org.korolev.autopartsstore.api.order.entity.OrderEvent;
+import org.korolev.autopartsstore.api.order.exception.OrderNotModifiableException;
+import org.korolev.autopartsstore.api.order.util.OrderSpecifications;
 import org.korolev.autopartsstore.api.user.entity.UserEntity;
 import org.korolev.autopartsstore.api.user.service.UserService;
 import org.korolev.autopartsstore.api.order.dto.OrderRequest;
@@ -13,6 +17,7 @@ import org.korolev.autopartsstore.api.order.mapper.OrderMapper;
 import org.korolev.autopartsstore.api.order.repository.OrderRepository;
 import org.korolev.autopartsstore.api.security.CurrentUserService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -31,8 +36,9 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ADMIN')")
-    public PageResponse<OrderResponse> findAllOrders(Pageable pageable) {
-        return PageResponse.of(orderRepository.findAll(pageable), orderMapper::toResponse);
+    public PageResponse<OrderResponse> findAllOrders(Pageable pageable, OrderFilter filter) {
+        Specification<OrderEntity> spec = OrderSpecifications.from(filter);
+        return PageResponse.of(orderRepository.findAll(spec, pageable), orderMapper::toResponse);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -65,6 +71,15 @@ public class OrderService {
         return orderMapper.toResponse(orderRepository.save(orderEntity));
     }
 
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
+    public OrderResponse updateOrderStatus(Long orderId, OrderEvent event) {
+        OrderEntity order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
+        transitionTo(order, event);
+        return orderMapper.toResponse(orderRepository.save(order));
+    }
+
     @PreAuthorize("hasRole('CUSTOMER')")
     @Transactional
     public void deleteOrderById(Long id) {
@@ -83,5 +98,16 @@ public class OrderService {
         }
 
         return order;
+    }
+
+    private void transitionTo(OrderEntity order, OrderEvent event) {
+        OrderStatus status = order.getStatus();
+        OrderStatus next = event.getTargetStatus();
+        if (!status.canTransitionTo(next)) {
+            throw new OrderNotModifiableException(
+                    "Cannot transition from " + status + " to " + next + " via " + event
+            );
+        }
+        order.setStatus(next);
     }
 }
