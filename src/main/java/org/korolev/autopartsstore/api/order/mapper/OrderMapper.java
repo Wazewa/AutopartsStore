@@ -5,8 +5,9 @@ import org.korolev.autopartsstore.api.order.dto.OrderResponse;
 import org.korolev.autopartsstore.api.order.entity.OrderEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface OrderMapper {
     @Mapping(target = "userId", source = "user.id")
     OrderResponse toResponse(OrderEntity orderEntity);
