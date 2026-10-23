@@ -1,5 +1,6 @@
 package org.korolev.autopartsstore.api.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.korolev.autopartsstore.api.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
@@ -40,6 +41,11 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**",
                                 "/v3/api-docs.yaml", "/swagger-resources/**", "/webjars/**").permitAll()
                         .anyRequest().authenticated())
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                        })
+                )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
