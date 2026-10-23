@@ -82,6 +82,7 @@ public class ProductController {
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Товар успешно создан"),
             @ApiResponse(responseCode = "400", description = "Невалидные данные"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
             @ApiResponse(responseCode = "409", description = "Товар с заданным артикулом уже есть")
     })
     @Operation(summary = "Создать товар", description = "Создает товар")
@@ -93,6 +94,7 @@ public class ProductController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Товар успешно обновлен"),
             @ApiResponse(responseCode = "400", description = "Невалидные данные"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
             @ApiResponse(responseCode = "404", description = "Товар с заданным ID не найден"),
             @ApiResponse(responseCode = "409", description = "Товар с заданным артикулом уже есть")
     })
@@ -106,6 +108,7 @@ public class ProductController {
 
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Товар с заданным ID успешно удален"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещен"),
             @ApiResponse(responseCode = "404", description = "Товар с заданным ID не найден")
     })
     @Operation(summary = "Удалить товар по ID", description = "Удаляет товар по ID")

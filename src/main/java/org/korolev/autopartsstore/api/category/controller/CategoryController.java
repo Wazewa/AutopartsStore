@@ -53,6 +53,7 @@ public class CategoryController {
                     description = "Невалидные данные"),
             @ApiResponse(responseCode = "409",
                     description = "Категория с заданным именем уже существует"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещен")
     })
     @Operation(summary = "Создать категорию", description = "Создает категорию товаров")
     @PostMapping
@@ -68,7 +69,9 @@ public class CategoryController {
             @ApiResponse(responseCode = "404",
                     description = "Категория товаров с заданным ID не найдена"),
             @ApiResponse(responseCode = "409",
-                    description = "Категория с заданным именем уже существует")
+                    description = "Категория с заданным именем уже существует"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещен")
+
     })
     @Operation(summary = "Обновить категорию", description = "Обновляет категорию товаров с заданным ID")
     @PutMapping("/{id}")
@@ -84,7 +87,8 @@ public class CategoryController {
             @ApiResponse(responseCode = "404",
                     description = "Категория товаров с заданным ID не найдена"),
             @ApiResponse(responseCode = "409",
-                    description = "Категория используется товарами и не может быть удалена")
+                    description = "Категория используется товарами и не может быть удалена"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещен")
     })
     @Operation(summary = "Удалить категорию по ID", description = "Удаляет категорию товаров по заданному ID. " +
             "Если категория используется товарами, то вернется 409 (Conflict)")
