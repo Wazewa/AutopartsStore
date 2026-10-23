@@ -79,6 +79,8 @@ java -jar target/*.jar --spring.profiles.active=dev
 | Cart Items | `/api/carts/{cartId}/items` |
 | Orders | `/api/orders` |
 | Order Items | `/api/orders/{orderId}/items` |
+| Смена статуса заказа | `PATCH /api/orders/{id}/status` |
+| Мои заказы | `GET /api/orders/me` |
 
 ## Безопасность
 
@@ -113,7 +115,6 @@ java -jar target/*.jar --spring.profiles.active=dev
 
 - Event-driven аналитика (Kafka + ClickHouse + Grafana).
 - Микросервисная архитектура (Gateway, Eureka, Saga, Outbox).
-- Пагинация/фильтрация/сортировка.
 - Тесты (unit + integration).
 - CI/CD (GitHub Actions).
 - Frontend (React + Vite).
