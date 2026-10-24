@@ -3,12 +3,11 @@ package org.korolev.autopartsstore.api.product.mapper;
 import org.korolev.autopartsstore.api.product.dto.ProductRequest;
 import org.korolev.autopartsstore.api.product.dto.ProductResponse;
 import org.korolev.autopartsstore.api.product.entity.ProductEntity;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring",
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+        unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ProductMapper {
     ProductResponse toResponse(ProductEntity productEntity);
 
