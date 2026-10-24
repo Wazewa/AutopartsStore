@@ -30,5 +30,24 @@ services:
       JWT_ACCESS_TTL: ${JWT_ACCESS_TTL}
     ports:
       - "8080:8080"
+  prometheus:
+    image: prom/prometheus
+    container_name: autoparts-store-prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - backend
+  grafana:
+    image: grafana/grafana
+    volumes:
+      - ./grafana:/var/lib/grafana
+    container_name: autoparts-store-grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
 volumes:
   postgres_data:
