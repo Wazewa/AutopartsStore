@@ -12,6 +12,8 @@ REST API для интернет-магазина автозапчастей.
 - Lombok
 - Springdoc OpenAPI (Swagger)
 - Docker + Docker Compose
+- Spring Boot Actuator + Micrometer
+- Prometheus и Grafana (для сбора и визуализации метрик)
 
 ## Как запустить
 
@@ -19,7 +21,7 @@ REST API для интернет-магазина автозапчастей.
 
 ```bash
 # Клонировать репозиторий
-git clone https://github.com/Wazewa/Automagazine.git
+git clone https://github.com/Wazewa/AutopartsStore.git
 cd Automagazine
 
 # Создать .env из шаблона
@@ -31,6 +33,13 @@ docker compose up -d --build
 
 Приложение будет доступно на [http://localhost:8080](http://localhost:8080).
 При первом запуске Flyway автоматически применит миграции и создаст схему БД.
+
+### Мониторинг (Prometheus + Grafana)
+
+После запуска стека доступны:
+- **Prometheus**: http://localhost:9090 (сбор метрик с `/actuator/prometheus`)
+- **Grafana**: http://localhost:3000 (admin/admin) — для визуализации (дашборд в `grafana/spring-boot-dashboard.json`)
+- **Actuator (health)**: http://localhost:8081/actuator/health (management-порт, наружу не публикуется)
 
 ### Локально
 
@@ -70,6 +79,7 @@ java -jar target/*.jar --spring.profiles.active=dev
 
 | Ресурс | URL |
 |--------|-----|
+| Actuator (health) | `GET /actuator/health` (порт 8081) |
 | Users | `/api/users` |
 | Products | `/api/products` |
 | Categories | `/api/categories` |
@@ -90,6 +100,7 @@ java -jar target/*.jar --spring.profiles.active=dev
 - **Owner-check** — клиент видит/меняет только свои ресурсы
   (`requireOwnOrder`, `requireOwnCart`).
 - **Пароли** — BCrypt.
+- **Actuator** — вынесен на отдельный порт 8081; `/actuator/health` и `/actuator/prometheus` доступны анонимно (для Prometheus и health-проб), остальные эндпоинты — только `ADMIN`. Порт 8081 наружу не публикуется.
 - **Публичные эндпоинты**: `/api/auth/**`, `GET /api/products/**`,
   `GET /api/categories/**`, `GET /api/compatibilities/**`,
   `POST /api/events`, Swagger.
@@ -113,8 +124,6 @@ java -jar target/*.jar --spring.profiles.active=dev
 
 ## Дальнейшее развитие
 
-- Event-driven аналитика (Kafka + ClickHouse + Grafana).
-- Микросервисная архитектура (Gateway, Eureka, Saga, Outbox).
-- Тесты (unit + integration).
-- CI/CD (GitHub Actions).
-- Frontend (React + Vite).
+- **Event-driven аналитика (Kafka + ClickHouse + Grafana)**: вынести сбор событий в отдельный пайплайн через Outbox Pattern.
+- **Микросервисная архитектура** (Gateway, Eureka, Saga, Outbox).
+- **Frontend** (React + Vite).
