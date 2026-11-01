@@ -1,5 +1,6 @@
 package org.korolev.autopartsstore.api.event.mapper;
 
+import org.korolev.autopartsstore.api.event.dto.EventMessage;
 import org.korolev.autopartsstore.api.event.dto.EventRequest;
 import org.korolev.autopartsstore.api.event.dto.EventResponse;
 import org.korolev.autopartsstore.api.event.entity.EventEntity;
@@ -16,4 +17,8 @@ public interface EventMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "eventDate", ignore = true)
     EventEntity toEntity(EventRequest eventRequest);
+
+    @Mapping(target = "eventId", source = "id")
+    @Mapping(target = "userId", source = "user.id")
+    EventMessage toMessage(EventEntity entity);
 }
