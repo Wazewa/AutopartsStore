@@ -14,6 +14,8 @@ REST API для интернет-магазина автозапчастей.
 - Docker + Docker Compose
 - Spring Boot Actuator + Micrometer
 - Prometheus и Grafana (для сбора и визуализации метрик)
+- Kafka (Event-Driven Architecture)
+- ClickHouse (в отдельном сервисе аналитики)
 
 ## Как запустить
 
@@ -22,7 +24,7 @@ REST API для интернет-магазина автозапчастей.
 ```bash
 # Клонировать репозиторий
 git clone https://github.com/Wazewa/AutopartsStore.git
-cd Automagazine
+cd AutopartsStore
 
 # Создать .env из шаблона
 cp .env.example .env
@@ -75,6 +77,11 @@ java -jar target/*.jar --spring.profiles.active=dev
 | `POSTGRES_USER` | Пользователь БД | `postgres` |
 | `POSTGRES_PASSWORD` | Пароль БД | — |
 
+### Event-Driven архитектура
+Проект использует паттерн **Transactional Outbox** для надежной публикации событий.
+События из таблицы `event` отправляются в Kafka, откуда их читает отдельный микросервис аналитики 
+[AutopartsStore-analytics-service](https://github.com/Wazewa/AutopartsStore-Analytics-Service) и сохраняет в ClickHouse.
+
 ## Основные endpoints
 
 | Ресурс | URL |
@@ -123,7 +130,6 @@ java -jar target/*.jar --spring.profiles.active=dev
 Коллекция в разработке. Примеры запросов — в Swagger UI.
 
 ## Дальнейшее развитие
-
-- **Event-driven аналитика (Kafka + ClickHouse + Grafana)**: вынести сбор событий в отдельный пайплайн через Outbox Pattern.
-- **Микросервисная архитектура** (Gateway, Eureka, Saga, Outbox).
+- **Визуализация аналитики**: Подключение Grafana к ClickHouse (в процессе).
+- **Микросервисная архитектура** (Выделение других доменов, Gateway, Eureka, Saga).
 - **Frontend** (React + Vite).
