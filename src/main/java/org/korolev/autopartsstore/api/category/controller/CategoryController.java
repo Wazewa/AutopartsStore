@@ -42,7 +42,7 @@ public class CategoryController {
     @Operation(summary = "Получить категорию по ID", description = "Возвращает категорию товаров по заданному ID")
     @GetMapping("/{id}")
     public ResponseEntity<CategoryResponse> getCategoryById(
-            @Parameter(description = "ID категории", example = "1") @PathVariable Long id) {
+            @PathVariable Long id) {
         return ResponseEntity.ok(categoryService.findCategoryById(id));
     }
 
@@ -76,7 +76,7 @@ public class CategoryController {
     @Operation(summary = "Обновить категорию", description = "Обновляет категорию товаров с заданным ID")
     @PutMapping("/{id}")
     public ResponseEntity<CategoryResponse> updateCategory(
-            @Parameter(description = "ID категории", example = "1") @PathVariable Long id,
+            @PathVariable Long id,
             @Valid @RequestBody CategoryRequest categoryRequest) {
         return ResponseEntity.ok(categoryService.updateCategory(id, categoryRequest));
     }
@@ -94,7 +94,7 @@ public class CategoryController {
             "Если категория используется товарами, то вернется 409 (Conflict)")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(
-            @Parameter(description = "ID категории", example = "1") @PathVariable Long id) {
+            @PathVariable Long id) {
         categoryService.deleteCategory(id);
 
         return ResponseEntity.noContent().build();

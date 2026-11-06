@@ -13,8 +13,11 @@ public interface EventMapper {
     @Mapping(target = "userId", source = "user.id")
     EventResponse toResponse(EventEntity eventEntity);
 
-    @Mapping(target = "user", ignore = true)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "retryCount", ignore = true)
+    @Mapping(target = "sentAt", ignore = true)
+    @Mapping(target = "user", ignore = true)
     @Mapping(target = "eventDate", ignore = true)
     EventEntity toEntity(EventRequest eventRequest);
 

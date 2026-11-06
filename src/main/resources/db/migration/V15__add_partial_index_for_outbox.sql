@@ -1,0 +1,1 @@
+CREATE INDEX idx_event_new_status ON event(event_date) WHERE status = 'NEW';

@@ -43,17 +43,17 @@ class CrudIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(catRequest)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("Тестовая категория: Масла"));
+                .andExpect(jsonPath("$.nameCategory").value("Тестовая категория: Масла"));
 
         CategoryEntity category = categoryRepository.findAll().stream()
-                .filter(c -> c.getName().equals("Тестовая категория: Масла")).findFirst().orElseThrow();
+                .filter(c -> c.getNameCategory().equals("Тестовая категория: Масла")).findFirst().orElseThrow();
 
         CategoryRequest updateCatRequest = new CategoryRequest("Автомасла", "Обновлено");
         mockMvc.perform(put("/api/categories/" + category.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateCatRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Автомасла"));
+                .andExpect(jsonPath("$.nameCategory").value("Автомасла"));
 
         ProductEntity product = ProductEntity.builder()
                 .name("Масло 10W-40").price(new BigDecimal("1500")).quantity(5).build();

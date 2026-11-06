@@ -36,13 +36,9 @@ public class CartController {
     @Operation(summary = "Получить все корзины", description = "Возвращает список всех пользовательских корзин")
     @GetMapping
     public ResponseEntity<PageResponse<CartResponse>> getAllCarts(
-            @Parameter(description = "Номер страницы", example = "0")
             @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Размер страницы", example = "25")
             @RequestParam(defaultValue = "25") int size,
-            @Parameter(description = "Поле сортировки", example = "createdDate")
             @RequestParam(defaultValue = "id") String sortBy,
-            @Parameter(description = "Направление сортировки", example = "desc")
             @RequestParam(defaultValue = "asc") String direction)
     {
         Pageable pageable = PageableFactory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
@@ -58,7 +54,7 @@ public class CartController {
             description = "Возвращает пользовательскую корзину по заданному ID")
     @GetMapping("/{id}")
     public ResponseEntity<CartResponse> getCartById(
-            @Parameter(description = "ID корзины", example = "1") @PathVariable Long id) {
+            @PathVariable Long id) {
         return ResponseEntity.ok(cartService.findCartById(id));
     }
 

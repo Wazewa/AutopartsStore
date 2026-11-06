@@ -1,0 +1,31 @@
+ALTER TABLE users RENAME COLUMN user_id TO id;
+ALTER TABLE roles RENAME COLUMN role_id TO id;
+ALTER TABLE product RENAME COLUMN product_id TO id;
+ALTER TABLE orders RENAME COLUMN order_id TO id;
+ALTER TABLE order_product RENAME COLUMN order_product_id TO id;
+ALTER TABLE event RENAME COLUMN event_id TO id;
+ALTER TABLE compatibility RENAME COLUMN compatibility_id TO id;
+ALTER TABLE category RENAME COLUMN category_id TO id;
+ALTER TABLE cart RENAME COLUMN cart_id TO id;
+ALTER TABLE cart_product RENAME COLUMN cart_product_id TO id;
+
+ALTER TABLE users ALTER COLUMN id TYPE BIGINT;
+ALTER TABLE roles ALTER COLUMN id TYPE BIGINT;
+ALTER TABLE product ALTER COLUMN id TYPE BIGINT;
+ALTER TABLE orders ALTER COLUMN id TYPE BIGINT;
+ALTER TABLE order_product ALTER COLUMN id TYPE BIGINT;
+ALTER TABLE event ALTER COLUMN id TYPE BIGINT;
+ALTER TABLE compatibility ALTER COLUMN id TYPE BIGINT;
+ALTER TABLE category ALTER COLUMN id TYPE BIGINT;
+ALTER TABLE cart ALTER COLUMN id TYPE BIGINT;
+ALTER TABLE cart_product ALTER COLUMN id TYPE BIGINT;
+
+ALTER SEQUENCE customer_customer_id_seq AS bigint;
+ALTER SEQUENCE category_category_id_seq AS bigint;
+ALTER SEQUENCE product_product_id_seq AS bigint;
+ALTER SEQUENCE compatibility_compatibility_id_seq AS bigint;
+ALTER SEQUENCE cart_cart_id_seq AS bigint;
+ALTER SEQUENCE event_event_id_seq AS bigint;
+ALTER SEQUENCE cart_product_cart_product_id_seq AS bigint;
+ALTER SEQUENCE orders_order_id_seq AS bigint;
+ALTER SEQUENCE order_product_order_product_id_seq AS bigint;

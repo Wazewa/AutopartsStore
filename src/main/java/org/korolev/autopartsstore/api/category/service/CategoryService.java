@@ -46,7 +46,7 @@ public class CategoryService {
 
         CategoryEntity categoryEntity = categoryMapper.toEntity(categoryRequest);
 
-        if(categoryRepository.existsByName(categoryEntity.getName())) {
+        if(categoryRepository.existsByNameCategory(categoryEntity.getNameCategory())) {
             throw new CategoryAlreadyExistsException("Category already exists.");
         }
 
@@ -60,9 +60,9 @@ public class CategoryService {
         CategoryEntity categoryEntity = categoryRepository.findById(id).orElseThrow(
                 () -> new CategoryNotFoundException("Category not found."));
 
-        if (!categoryRequest.name().equals(categoryEntity.getName())
-                && categoryRepository.existsByName(categoryRequest.name())) {
-            throw new CategoryAlreadyExistsException("Category with name " + categoryRequest.name() + " already exists");
+        if (!categoryRequest.nameCategory().equals(categoryEntity.getNameCategory())
+                && categoryRepository.existsByNameCategory(categoryRequest.nameCategory())) {
+            throw new CategoryAlreadyExistsException("Category with name " + categoryRequest.nameCategory() + " already exists");
         }
 
         categoryMapper.updateEntity(categoryRequest, categoryEntity);

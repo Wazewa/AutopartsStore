@@ -2,6 +2,7 @@ package org.korolev.autopartsstore.api.outbox;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.korolev.autopartsstore.api.event.entity.EventEntity;
 import org.korolev.autopartsstore.api.event.entity.EventStatus;
 import org.korolev.autopartsstore.api.event.mapper.EventMapper;
@@ -18,14 +19,18 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class OutboxPublisher {
+    private static final int BATCH_SIZE = 20;
+    private static final int RETRY_COUNT = 5;
+
     private final EventRepository eventRepository;
     private final EventProducer eventProducer;
     private final EventMapper eventMapper;
 
     @Transactional
+    @SchedulerLock(name = "outbox_publisher", lockAtMostFor = "PT5M", lockAtLeastFor = "PT1S")
     @Scheduled(fixedDelay = 5000)
     public void publishNewEvent() {
-        List<EventEntity> eventList = eventRepository.findNewForUpdate(100);
+        List<EventEntity> eventList = eventRepository.findNewForUpdate(BATCH_SIZE);
         if (eventList.isEmpty()) {
             return;
         }
@@ -40,13 +45,13 @@ public class OutboxPublisher {
             }
             catch (Exception e) {
                 event.setRetryCount(event.getRetryCount() + 1);
-                if(event.getRetryCount() >= 5) {
+                if(event.getRetryCount() >= RETRY_COUNT) {
                     event.setStatus(EventStatus.FAILED);
-                    log.error("Event {} failed after 5 retries", event.getId(), e);
+                    log.error("Event {} failed after {} retries", event.getId(), RETRY_COUNT, e);
                 }
                 else {
-                    log.warn("Failed to send event {}, retry {}/5",
-                            event.getId(), event.getRetryCount());
+                    log.warn("Failed to send event {}, retry {}/{}",
+                            event.getId(), event.getRetryCount(), RETRY_COUNT);
                 }
             }
         }

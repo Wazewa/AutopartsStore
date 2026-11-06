@@ -38,27 +38,16 @@ public class ProductController {
             "(с пагинацией, сортировкой и фильтрацией)")
     @GetMapping
     public ResponseEntity<PageResponse<ProductResponse>> getProducts(
-            @Parameter(description = "Номер страницы", example = "0")
             @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Размер страницы", example = "25")
             @RequestParam(defaultValue = "25") int size,
-            @Parameter(description = "Поле сортировки", example = "brand")
             @RequestParam(defaultValue = "id") String sortBy,
-            @Parameter(description = "Направление сортировки", example = "desc")
             @RequestParam(defaultValue = "asc") String direction,
-            @Parameter(description = "Фильтр названия", example = "10W-40")
             @RequestParam(required = false) String name,
-            @Parameter(description = "Фильтр бренда", example = "MANNOL")
             @RequestParam(required = false) String brand,
-            @Parameter(description = "Фильтр категории", example = "1")
             @RequestParam(required = false) Long categoryId,
-            @Parameter(description = "Фильтр артикулов", example = "w14572")
             @RequestParam(required = false) String article,
-            @Parameter(description = "Фильтр нижней границы цены", example = "500")
             @RequestParam(required = false) BigDecimal priceFrom,
-            @Parameter(description = "Фильтр верхней границы цены", example = "2500")
             @RequestParam(required = false) BigDecimal priceTo,
-            @Parameter(description = "Только товары в наличии (quantity > 0)", example = "true")
             @RequestParam(required = false) Boolean inStock)
     {
         ProductFilter productFilter = new ProductFilter(name, brand, categoryId,
@@ -75,7 +64,7 @@ public class ProductController {
     @Operation(summary = "Получить товар по ID", description = "Возвращает товар по ID")
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> getProductById(
-            @Parameter(description = "ID товара", example = "1") @PathVariable Long id) {
+            @PathVariable Long id) {
         return ResponseEntity.ok(productService.findProductById(id));
     }
 
@@ -101,7 +90,7 @@ public class ProductController {
     @Operation(summary = "Обновить товар", description = "Обновляет товар по заданному ID")
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponse> updateProduct(
-            @Parameter(description = "ID товара", example = "1") @PathVariable Long id,
+            @PathVariable Long id,
             @Valid @RequestBody ProductRequest productRequest) {
         return ResponseEntity.ok(productService.updateProduct(id, productRequest));
     }
@@ -114,7 +103,7 @@ public class ProductController {
     @Operation(summary = "Удалить товар по ID", description = "Удаляет товар по ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(
-            @Parameter(description = "ID товара", example = "1") @PathVariable Long id) {
+            @PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }

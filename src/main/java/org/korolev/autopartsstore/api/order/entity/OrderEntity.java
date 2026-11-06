@@ -2,6 +2,8 @@ package org.korolev.autopartsstore.api.order.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+import org.korolev.autopartsstore.api.config.BaseEntity;
 import org.korolev.autopartsstore.api.user.entity.UserEntity;
 
 import java.time.Instant;
@@ -10,29 +12,24 @@ import java.time.Instant;
 @Table(name = "orders")
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id")
-    private Long id;
-
+public class OrderEntity extends BaseEntity {
     @Builder.Default
-    @Column(name = "order_date", nullable = false)
+    @Column
     private Instant orderDate = Instant.now();
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", length = 20, nullable = false)
+    @Column
     private OrderStatus status;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "pay_method", length = 20, nullable = false)
+    @Column
     private PayMethod payMethod;
 
     @Version
-    @Column(name = "version", nullable = false)
+    @Column
     private Long version;
 
     @ManyToOne(fetch = FetchType.LAZY)

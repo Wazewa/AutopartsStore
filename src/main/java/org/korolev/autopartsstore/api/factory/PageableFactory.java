@@ -13,7 +13,7 @@ public class PageableFactory {
         int safeSize = Math.clamp(size, 1, 1024);
         String safeSortBy = (allowedSortFields != null && allowedSortFields.contains(sortBy))
                 ? sortBy
-                : "id";   // дефолт
+                : "id";
         Sort.Direction dir = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
         return PageRequest.of(safePage, safeSize, Sort.by(dir, safeSortBy));
     }

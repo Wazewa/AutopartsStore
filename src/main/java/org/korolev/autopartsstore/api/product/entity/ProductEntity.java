@@ -2,43 +2,39 @@ package org.korolev.autopartsstore.api.product.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.korolev.autopartsstore.api.category.entity.CategoryEntity;
+import org.korolev.autopartsstore.api.config.BaseEntity;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "product")
-public class ProductEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
-    private Long id;
-
-    @Column(name = "name", nullable = false, length = 100)
+public class ProductEntity extends BaseEntity {
+    @Column
     private String name;
 
-    @Column(name = "price", nullable = false)
+    @Column
     private BigDecimal price;
 
-    @Column(name = "article", length = 100)
+    @Column
     private String article;
 
-    @Column(name = "quantity", nullable = false)
+    @Column
     private Integer quantity;
 
-    @Column(name = "image_url", length = 1024)
+    @Column
     private String imageUrl;
 
-    @Column(name = "brand", length = 100)
+    @Column
     private String brand;
 
-    @Column(name = "comment")
+    @Column
     private String comment;
 
     @ManyToOne(fetch = FetchType.LAZY)

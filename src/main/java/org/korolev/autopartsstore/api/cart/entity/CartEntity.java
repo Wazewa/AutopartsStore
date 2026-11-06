@@ -2,31 +2,27 @@ package org.korolev.autopartsstore.api.cart.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.korolev.autopartsstore.api.config.BaseEntity;
 import org.korolev.autopartsstore.api.user.entity.UserEntity;
 
 import java.time.Instant;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "cart")
-public class CartEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cart_id")
-    private Long id;
-
+public class CartEntity extends BaseEntity {
     @Builder.Default
-    @Column(name = "created_date", nullable = false)
+    @Column
     private Instant createdDate = Instant.now();
 
     @UpdateTimestamp
-    @Column(name = "modified_date", nullable = false)
+    @Column
     private Instant modifiedDate;
 
     @OneToOne(fetch = FetchType.LAZY)

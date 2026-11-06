@@ -39,8 +39,7 @@ public class OrderProductController {
     @Operation(summary = "Получить все элементы заказа",
             description = "Возвращает все элементы заказа с заданным ID")
     @GetMapping("/{orderId}/items")
-    public ResponseEntity<List<OrderProductResponse>> getOrderItems(
-            @Parameter(description = "ID заказа", example = "1") @PathVariable Long orderId) {
+    public ResponseEntity<List<OrderProductResponse>> getOrderItems(@PathVariable Long orderId) {
         return ResponseEntity.ok(orderProductService.findOrderItems(orderId));
     }
 
@@ -54,7 +53,7 @@ public class OrderProductController {
             description = "Добавляет товар в заказ. Заказ можно менять только в статусах PENDING или PROCESSING")
     @PostMapping("/{orderId}/items")
     public ResponseEntity<OrderProductResponse> addProductToOrder(
-            @Parameter(description = "ID заказа", example = "1") @PathVariable Long orderId,
+            @PathVariable Long orderId,
             @Valid @RequestBody OrderProductRequest orderProductRequest
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderProductService.addProductToOrder(
@@ -72,9 +71,9 @@ public class OrderProductController {
                     "Заказ можно менять только в статусах PENDING или PROCESSING")
     @PutMapping("/{orderId}/items/{productId}")
     public ResponseEntity<OrderProductResponse> updateQuantity(
-            @Parameter(description = "ID заказа", example = "1") @PathVariable Long orderId,
-            @Parameter(description = "ID товара", example = "1") @PathVariable Long productId,
-            @Parameter(description = "Количество товара", example = "2") @RequestParam Integer quantity) {
+           @PathVariable Long orderId,
+           @PathVariable Long productId,
+           @RequestParam Integer quantity) {
         return ResponseEntity.ok(orderProductService.updateQuantity(orderId, productId, quantity));
     }
 
@@ -88,8 +87,8 @@ public class OrderProductController {
                     "Товар из заказа можно удалять только в статусах PENDING или PROCESSING")
     @DeleteMapping("/{orderId}/items/{productId}")
     public ResponseEntity<Void> removeProductFromOrder(
-            @Parameter(description = "ID заказа", example = "1") @PathVariable Long orderId,
-            @Parameter(description = "ID товара", example = "1") @PathVariable Long productId) {
+            @PathVariable Long orderId,
+            @PathVariable Long productId) {
         orderProductService.removeProductFromOrder(orderId, productId);
 
         return ResponseEntity.noContent().build();
@@ -104,7 +103,7 @@ public class OrderProductController {
             description = "Очищает заказ с заданным ID. Заказ можно очищать только в статусах PENDING или PROCESSING")
     @DeleteMapping("/{orderId}/items")
     public ResponseEntity<Void> clearOrder(
-            @Parameter(description = "ID заказа", example = "1") @PathVariable Long orderId) {
+            @PathVariable Long orderId) {
         orderProductService.clearOrder(orderId);
 
         return ResponseEntity.noContent().build();

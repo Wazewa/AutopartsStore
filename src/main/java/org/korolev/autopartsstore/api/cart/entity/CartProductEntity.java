@@ -2,13 +2,15 @@ package org.korolev.autopartsstore.api.cart.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+import org.korolev.autopartsstore.api.config.BaseEntity;
 import org.korolev.autopartsstore.api.product.entity.ProductEntity;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -17,17 +19,11 @@ import java.math.BigDecimal;
         name = "uk_cart_product",
         columnNames = {"cart_id", "product_id"}
 ))
-public class CartProductEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cart_product_id")
-    private Long id;
-
-    @Column(name = "price_add_at", nullable = false)
+public class CartProductEntity extends BaseEntity {
+    @Column
     private BigDecimal priceAddAt;
 
-    @Column(name = "quantity", nullable = false)
+    @Column
     private Integer quantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
