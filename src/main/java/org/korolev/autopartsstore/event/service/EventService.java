@@ -2,6 +2,7 @@ package org.korolev.autopartsstore.event.service;
 
 import lombok.AllArgsConstructor;
 import org.korolev.autopartsstore.common.dto.PageResponse;
+import org.korolev.autopartsstore.event.entity.EventType;
 import org.korolev.autopartsstore.user.entity.UserEntity;
 import org.korolev.autopartsstore.user.service.UserService;
 import org.korolev.autopartsstore.event.dto.EventRequest;
@@ -17,6 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 
 @Service
@@ -41,6 +44,17 @@ public class EventService {
                         .orElseThrow(
                         () -> new EventNotFoundException("Event not found.")
         ));
+    }
+
+    @Transactional
+    public void trackEvent(EventType eventType, UserEntity user, Integer sessionId) {
+        EventEntity eventEntity = EventEntity.builder()
+                .eventType(eventType)
+                .sessionId(sessionId != null ? sessionId :
+                        ThreadLocalRandom.current().nextInt(1, 1000))
+                .user(user)
+                .build();
+        eventRepository.save(eventEntity);
     }
 
     @Transactional

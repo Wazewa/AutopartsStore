@@ -2,6 +2,8 @@ package org.korolev.autopartsstore.order.service;
 
 import lombok.AllArgsConstructor;
 import org.korolev.autopartsstore.common.dto.PageResponse;
+import org.korolev.autopartsstore.event.entity.EventType;
+import org.korolev.autopartsstore.event.service.EventService;
 import org.korolev.autopartsstore.order.dto.OrderFilter;
 import org.korolev.autopartsstore.order.entity.OrderEvent;
 import org.korolev.autopartsstore.order.exception.OrderNotModifiableException;
@@ -33,6 +35,7 @@ public class OrderService {
     private final OrderMapper orderMapper;
     private final UserService userService;
     private final CurrentUserService currentUserService;
+    private final EventService eventService;
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ADMIN')")
@@ -68,7 +71,12 @@ public class OrderService {
         orderEntity.setUser(userEntity);
         orderEntity.setOrderDate(Instant.now());
 
-        return orderMapper.toResponse(orderRepository.save(orderEntity));
+        OrderResponse orderResponse = orderMapper.toResponse(orderRepository.save(orderEntity));
+
+        eventService.trackEvent(EventType.ORDER_CREATED,
+                currentUserService.getCurrentUserOrNull(), null);
+
+        return orderResponse;
     }
 
     @Transactional

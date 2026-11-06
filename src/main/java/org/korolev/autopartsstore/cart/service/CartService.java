@@ -1,7 +1,9 @@
 package org.korolev.autopartsstore.cart.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.korolev.autopartsstore.common.dto.PageResponse;
+import org.korolev.autopartsstore.event.entity.EventType;
+import org.korolev.autopartsstore.event.service.EventService;
 import org.korolev.autopartsstore.user.service.UserService;
 import org.korolev.autopartsstore.cart.dto.CartResponse;
 import org.korolev.autopartsstore.cart.entity.CartEntity;
@@ -17,13 +19,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CartService {
 
     private final CartRepository cartRepository;
     private final CartMapper cartMapper;
     private final UserService userService;
     private final CurrentUserService currentUserService;
+    private final EventService eventService;
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ADMIN')")
@@ -57,7 +60,7 @@ public class CartService {
     public CartResponse getOrCreateCart() {
         UserEntity existUser = userService.findByEmail(currentUserService.getEmail());
 
-        return cartRepository.findByUserId(existUser.getId())
+        CartResponse cartResponse = cartRepository.findByUserId(existUser.getId())
                 .map(cartMapper::toResponse)
                 .orElseGet(() -> {
                         CartEntity cartEntity = CartEntity.builder()
@@ -65,6 +68,10 @@ public class CartService {
                                 .build();
                         return cartMapper.toResponse(cartRepository.save(cartEntity));
                 });
+
+        eventService.trackEvent(EventType.CART_VIEWED, currentUserService.getCurrentUserOrNull(), null);
+
+        return cartResponse;
     }
 
     @Transactional
