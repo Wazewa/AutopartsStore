@@ -1,33 +1,26 @@
 package org.korolev.autopartsstore.api.role.entity;
 
-import jakarta.persistence.Id;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import lombok.Builder;
 import lombok.Setter;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
+import org.korolev.autopartsstore.api.config.BaseEntity;
 
 @Entity
 @Table(name = "roles")
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RoleEntity {
-    @Id
-    @Column(name = "role_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "role_code", nullable = false, length = 50)
+public class RoleEntity extends BaseEntity {
+    @Column
     private String roleCode;
 
-    @Column(name = "role_description", length = 255)
+    @Column
     private String roleDescription;
 }

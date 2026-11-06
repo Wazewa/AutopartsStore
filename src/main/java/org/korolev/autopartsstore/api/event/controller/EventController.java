@@ -38,13 +38,9 @@ public class EventController {
             "события (с пагинацией)")
     @GetMapping
     public ResponseEntity<PageResponse<EventResponse>> getAllEvents(
-            @Parameter(description = "Номер страницы", example = "0")
             @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Размер страницы", example = "25")
             @RequestParam(defaultValue = "25") int size,
-            @Parameter(description = "Поле сортировки", example = "eventDate")
             @RequestParam(defaultValue = "id") String sortBy,
-            @Parameter(description = "Направление сортировки", example = "desc")
             @RequestParam(defaultValue = "asc") String direction)
     {
         Pageable pageable = PageableFactory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
@@ -61,7 +57,7 @@ public class EventController {
             description = "Возвращает пользовательское событие по заданному ID")
     @GetMapping("/{id}")
     public ResponseEntity<EventResponse> getEventById(
-            @Parameter(description = "ID события", example = "1") @PathVariable Long id) {
+            @PathVariable Long id) {
         return ResponseEntity.ok(eventService.findEventById(id));
     }
 

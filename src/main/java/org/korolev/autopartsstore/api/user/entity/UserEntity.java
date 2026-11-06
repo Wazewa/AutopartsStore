@@ -3,48 +3,42 @@ package org.korolev.autopartsstore.api.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.korolev.autopartsstore.api.event.entity.EventEntity;
-import org.korolev.autopartsstore.api.order.entity.OrderEntity;
+import lombok.experimental.SuperBuilder;
+import org.korolev.autopartsstore.api.config.BaseEntity;
 import org.korolev.autopartsstore.api.role.entity.RoleEntity;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
+
 
 @Entity
 @Table(name = "users")
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserEntity {
+public class UserEntity extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long id;
-
-    @Column(name = "name", nullable = false, length = 30)
+    @Column
     private String name;
 
-    @Column(name = "surname", nullable = false, length = 30)
+    @Column
     private String surname;
 
-    @Column(name = "patronymic", length = 30)
+    @Column
     private String patronymic;
 
-    @Column(name = "email", nullable = false, length = 100, unique = true)
+    @Column
     private String email;
 
-    @Column(name = "password_hash", nullable = false, length = 100)
+    @Column
     private String passwordHash;
 
-    @Column(name = "registered_at", nullable = false)
+    @Column
     @Builder.Default
     private Instant registeredAt = Instant.now();
 
-    @Column(name = "phone", nullable = false, unique = true)
+    @Column
     private String phone;
 
     @ManyToOne(fetch = FetchType.LAZY)

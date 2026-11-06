@@ -15,13 +15,15 @@ import lombok.Setter;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import org.korolev.autopartsstore.api.config.BaseEntity;
 import org.korolev.autopartsstore.api.product.entity.ProductEntity;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -30,17 +32,11 @@ import java.math.BigDecimal;
         name = "uk_order_product",
         columnNames = {"order_id", "product_id"}
 ))
-public class OrderProductEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_product_id")
-    private Long id;
-
-    @Column(name = "price_add_at", nullable = false)
+public class OrderProductEntity extends BaseEntity {
+    @Column
     private BigDecimal priceAddAt;
 
-    @Column(name = "quantity", nullable = false)
+    @Column
     private Integer quantity;
 
     @ManyToOne(fetch = FetchType.LAZY)

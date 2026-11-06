@@ -34,13 +34,9 @@ public class UserController {
             "пользователей (с пагинацией))")
     @GetMapping
     public ResponseEntity<PageResponse<UserResponse>> getAllUsers(
-            @Parameter(description = "Номер страницы", example = "0")
             @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Размер страницы", example = "25")
             @RequestParam(defaultValue = "25") int size,
-            @Parameter(description = "Поле сортировки", example = "registeredAt")
             @RequestParam(defaultValue = "id") String sortBy,
-            @Parameter(description = "Направление сортировки", example = "desc")
             @RequestParam(defaultValue = "asc") String direction)
     {
         Pageable pageable = PageableFactory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
@@ -55,7 +51,7 @@ public class UserController {
     @Operation(summary = "Получить пользователя по ID", description = "Возвращает пользователя по ID")
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(
-            @Parameter(description = "ID пользователя", example = "1") @PathVariable Long id) {
+            @PathVariable Long id) {
         return ResponseEntity.ok(userService.findUserById(id));
     }
 
@@ -66,7 +62,7 @@ public class UserController {
     @Operation(summary = "Удалить пользователя по ID", description = "Удаляет пользователя по ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(
-            @Parameter(description = "ID пользователя", example = "1") @PathVariable Long id) {
+            @PathVariable Long id) {
         userService.deleteUser(id);
 
         return ResponseEntity.noContent().build();

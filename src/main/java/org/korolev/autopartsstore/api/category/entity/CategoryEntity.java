@@ -2,28 +2,20 @@ package org.korolev.autopartsstore.api.category.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.korolev.autopartsstore.api.product.entity.ProductEntity;
-
-import java.util.ArrayList;
-import java.util.List;
+import lombok.experimental.SuperBuilder;
+import org.korolev.autopartsstore.api.config.BaseEntity;
 
 @Entity
 @Table(name = "category")
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryEntity {
+public class CategoryEntity extends BaseEntity {
+    @Column
+    private String nameCategory;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "category_id")
-    private Long id;
-
-    @Column(name = "name_category", nullable = false, length = 30)
-    private String name;
-
-    @Column(name = "description_category")
-    private String description;
+    @Column
+    private String descriptionCategory;
 }

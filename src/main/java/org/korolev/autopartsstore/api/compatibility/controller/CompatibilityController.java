@@ -39,21 +39,13 @@ public class CompatibilityController {
             "товарами (с пагинацией, сортировкой и фильтрацией)")
     @GetMapping
     public ResponseEntity<PageResponse<CompatibilityResponse>> getAllCompatibilities(
-            @Parameter(description = "Номер страницы", example = "0")
             @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Размер страницы", example = "25")
             @RequestParam(defaultValue = "25") int size,
-            @Parameter(description = "Поле сортировки", example = "yearStart")
             @RequestParam(defaultValue = "id") String sortBy,
-            @Parameter(description = "Направление сортировки", example = "desc")
             @RequestParam(defaultValue = "asc") String direction,
-            @Parameter(description = "Фильтр бренда", example = "BMW")
             @RequestParam(required = false) String brand,
-            @Parameter(description = "Фильтр модели", example = "X5")
             @RequestParam(required = false) String model,
-            @Parameter(description = "Год выпуска", example = "2002")
             @RequestParam(required = false) Integer year,
-            @Parameter(description = "Фильтр ID продукта", example = "1")
             @RequestParam(required = false) Long productId)
     {
         CompatibilityFilter compatibilityFilter = new CompatibilityFilter(brand, model, year, productId);
@@ -69,7 +61,7 @@ public class CompatibilityController {
     @Operation(summary = "Получить совместимость по ID", description = "Возвращает совместимость по ID с товарами")
     @GetMapping("/{id}")
     public ResponseEntity<CompatibilityResponse> getCompatibilityById(
-            @Parameter(description = "ID совместимости", example = "1") @PathVariable Long id) {
+            @PathVariable Long id) {
         return ResponseEntity.ok(compatibilityService.findCompatibilityById(id));
     }
 
@@ -96,7 +88,7 @@ public class CompatibilityController {
     @Operation(summary = "Обновить совместимость по ID", description = "Обновляет совместимость с товарами")
     @PutMapping("/{id}")
     public ResponseEntity<CompatibilityResponse> updateCompatibility(
-            @Parameter(description = "ID совместимости", example = "1") @PathVariable Long id,
+            @PathVariable Long id,
             @Valid @RequestBody CompatibilityRequest compatibilityRequest) {
         return ResponseEntity.ok(compatibilityService.updateCompatibility(id, compatibilityRequest));
 
@@ -110,7 +102,7 @@ public class CompatibilityController {
     @Operation(summary = "Удалить совместимость по ID", description = "Удаляет совместимость с товарами")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCompatibility(
-            @Parameter(description = "ID совместимости", example = "1") @PathVariable Long id) {
+            @PathVariable Long id) {
         compatibilityService.deleteCompatibility(id);
         return ResponseEntity.noContent().build();
     }

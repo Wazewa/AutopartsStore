@@ -2,32 +2,29 @@ package org.korolev.autopartsstore.api.compatibility.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+import org.korolev.autopartsstore.api.config.BaseEntity;
 import org.korolev.autopartsstore.api.product.entity.ProductEntity;
 
 @Entity
 @Table(name = "compatibility")
 @Setter
 @Getter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompatibilityEntity {
+public class CompatibilityEntity extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "compatibility_id")
-    private Long id;
-
-    @Column(name = "brand", length = 100)
+    @Column
     private String brand;
 
-    @Column(name = "model", length = 100)
+    @Column
     private String model;
 
-    @Column(name = "year_start")
+    @Column
     private Integer yearStart;
 
-    @Column(name = "year_end")
+    @Column
     private Integer yearEnd;
 
     @ManyToOne(fetch = FetchType.LAZY)

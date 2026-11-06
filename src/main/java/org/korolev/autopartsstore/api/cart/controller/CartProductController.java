@@ -41,7 +41,7 @@ public class CartProductController {
             description = "Возвращает все элементы корзины с заданным ID")
     @GetMapping("/{cartId}/items")
     public ResponseEntity<List<CartProductResponse>> getCartItems(
-            @Parameter(description = "ID корзины", example = "1") @PathVariable Long cartId) {
+            @PathVariable Long cartId) {
         return ResponseEntity.ok(cartProductService.getCartItems(cartId));
     }
 
@@ -54,7 +54,7 @@ public class CartProductController {
             description = "Добавляет элемент в корзину с заданным ID")
     @PostMapping ("/{cartId}/items")
     public ResponseEntity<CartProductResponse> addProductToCart(
-            @Parameter(description = "ID корзины", example = "1") @PathVariable Long cartId,
+           @PathVariable Long cartId,
                                                                  @Valid @RequestBody
                                                                  CartProductRequest cartProductRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(cartProductService.addProductToCart(
@@ -70,9 +70,9 @@ public class CartProductController {
             description = "Обновляет количество товара в корзине с заданным ID")
     @PutMapping("/{cartId}/items/{productId}")
     public ResponseEntity<CartProductResponse> updateQuantity(
-            @Parameter(description = "ID корзины", example = "1") @PathVariable Long cartId,
-            @Parameter(description = "ID товара", example = "1") @PathVariable Long productId,
-            @Parameter(description = "Количество товара", example = "2") @RequestParam Integer quantity) {
+            @PathVariable Long cartId,
+            @PathVariable Long productId,
+            @RequestParam Integer quantity) {
         return ResponseEntity.ok(cartProductService.updateQuantity(cartId, productId, quantity));
     }
 
@@ -84,8 +84,8 @@ public class CartProductController {
             description = "Удаляет конкретный товар из корзины с заданным ID")
     @DeleteMapping("/{cartId}/items/{productId}")
     public ResponseEntity<Void> removeProductFromCart(
-            @Parameter(description = "ID корзины", example = "1") @PathVariable Long cartId,
-            @Parameter(description = "ID товара", example = "1") @PathVariable Long productId) {
+            @PathVariable Long cartId,
+            @PathVariable Long productId) {
         cartProductService.removeProductFromCart(cartId, productId);
 
         return ResponseEntity.noContent().build();
@@ -99,7 +99,7 @@ public class CartProductController {
             description = "Очищает корзину с заданным ID")
     @DeleteMapping("/{cartId}/items")
     public ResponseEntity<Void> clearCart(
-            @Parameter(description = "ID корзины", example = "1") @PathVariable Long cartId) {
+            @PathVariable Long cartId) {
         cartProductService.clearCart(cartId);
 
         return ResponseEntity.noContent().build();

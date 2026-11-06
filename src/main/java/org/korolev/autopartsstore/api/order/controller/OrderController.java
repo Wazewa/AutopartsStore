@@ -42,20 +42,13 @@ public class OrderController {
     @Operation(summary = "Получить все заказы", description = "Возвращает все заказы (с пагинацией)")
     @GetMapping
     public ResponseEntity<PageResponse<OrderResponse>> getAllOrders(
-            @Parameter(description = "Номер страницы", example = "0")
             @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Размер страницы", example = "25")
             @RequestParam(defaultValue = "25") int size,
-            @Parameter(description = "Поле сортировки", example = "orderDate")
             @RequestParam(defaultValue = "id") String sortBy,
-            @Parameter(description = "Направление сортировки", example = "desc")
             @RequestParam(defaultValue = "asc") String direction,
-            @Parameter(description = "Фильтр статусов", example = "PROCESSING")
             @RequestParam(required = false) OrderStatus status,
-            @Parameter(description = "Фильтр даты до")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             @RequestParam(required = false) Instant dateFrom,
-            @Parameter(description = "Фильтр даты по")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             @RequestParam(required = false) Instant dateTo
     ) {
@@ -73,7 +66,7 @@ public class OrderController {
     @Operation(summary = "Получить заказ по ID", description = "Возвращает заказ с заданным ID")
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponse> getOrderById(
-            @Parameter(description = "ID заказа", example = "1") @PathVariable Long id) {
+            @PathVariable Long id) {
         return ResponseEntity.ok(orderService.findOrderById(id));
     }
 
@@ -84,13 +77,9 @@ public class OrderController {
     @Operation(summary = "Получить мои заказы", description = "Возвращает заказы пользователя")
     @GetMapping("/me")
 public ResponseEntity<PageResponse<OrderResponse>> getMyOrders(
-          @Parameter(description = "Номер страницы", example = "0")
           @RequestParam(defaultValue = "0") int page,
-          @Parameter(description = "Размер страницы", example = "25")
           @RequestParam(defaultValue = "25") int size,
-          @Parameter(description = "Поле сортировки", example = "orderDate")
           @RequestParam(defaultValue = "id") String sortBy,
-          @Parameter(description = "Направление сортировки", example = "desc")
           @RequestParam(defaultValue = "asc") String direction)
     {
         Pageable pageable = PageableFactory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
@@ -118,7 +107,7 @@ public ResponseEntity<PageResponse<OrderResponse>> getMyOrders(
     @Operation(summary = "Обновить статус заказа", description = "Обновляет статус заказа по заданному ID заказа")
     @PatchMapping("/{id}/status")
     public ResponseEntity<OrderResponse> updateOrderStatus(
-            @Parameter(description = "ID заказа", example = "1") @PathVariable Long id,
+            @PathVariable Long id,
             @RequestBody @Valid UpdateOrderStatusRequest request) {
         return ResponseEntity.ok(orderService.updateOrderStatus(id, request.event()));
     }
@@ -130,7 +119,7 @@ public ResponseEntity<PageResponse<OrderResponse>> getMyOrders(
     @Operation(summary = "Удалить заказ", description = "Удаляет заказ по заданному ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(
-            @Parameter(description = "ID заказа", example = "1") @PathVariable Long id) {
+            @PathVariable Long id) {
         orderService.deleteOrderById(id);
 
         return ResponseEntity.noContent().build();
