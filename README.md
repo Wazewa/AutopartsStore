@@ -36,11 +36,13 @@ docker compose up -d --build
 Приложение будет доступно на [http://localhost:8080](http://localhost:8080).
 При первом запуске Flyway автоматически применит миграции и создаст схему БД.
 
-### Мониторинг (Prometheus + Grafana)
+### Мониторинг и аналитика
 
 После запуска стека доступны:
 - **Prometheus**: http://localhost:9090 (сбор метрик с `/actuator/prometheus`)
-- **Grafana**: http://localhost:3000 (admin/admin) — для визуализации (дашборд в `grafana/spring-boot-dashboard.json`)
+- **Grafana**: http://localhost:3000 (admin/admin) — для визуализации:
+  - Дашборд **«Spring Boot Metrics»** (в `grafana/spring-boot-dashboard.json`)
+  - Дашборд **«Autoparts Analytics»** (в `grafana/autoparts-analytics.json`) — визуализация бизнес-событий из ClickHouse.
 - **Actuator (health)**: http://localhost:8081/actuator/health (management-порт, наружу не публикуется)
 
 ### Локально
@@ -78,9 +80,13 @@ java -jar target/*.jar --spring.profiles.active=dev
 | `POSTGRES_PASSWORD` | Пароль БД | — |
 
 ### Event-Driven архитектура
-Проект использует паттерн **Transactional Outbox** для надежной публикации событий.
+Проект использует паттерн **Transactional Outbox** для надежной публикации событий. 
 События из таблицы `event` отправляются в Kafka, откуда их читает отдельный микросервис аналитики 
 [AutopartsStore-analytics-service](https://github.com/Wazewa/AutopartsStore-Analytics-Service) и сохраняет в ClickHouse.
+
+События генерируются двумя способами:
+1. **Автоматически** в бизнес-логике (просмотр товара, добавление в корзину, создание заказа, логин/регистрация).
+2. **Вручную** через публичный эндпоинт `POST /api/events` (для клиентских событий, которые собирает фронтенд).
 
 ## Основные endpoints
 
@@ -120,6 +126,14 @@ java -jar target/*.jar --spring.profiles.active=dev
 
 ## Тестирование
 
+Проект покрыт Unit и Integration тестами (покрытие строк ~57%). Для запуска всех тестов выполните:
+
+```bash
+mvn clean test
+```
+
+В проекте настроен GitHub Actions (.github/workflows/ci.yml). Пайплайн автоматически запускает тесты и сборку при каждом push и pull request в ветку main.
+
 ### Swagger UI
 
 Все endpoints доступны для тестирования прямо из браузера:
@@ -130,6 +144,6 @@ java -jar target/*.jar --spring.profiles.active=dev
 Коллекция в разработке. Примеры запросов — в Swagger UI.
 
 ## Дальнейшее развитие
-- **Визуализация аналитики**: Подключение Grafana к ClickHouse (в процессе).
-- **Микросервисная архитектура** (Выделение других доменов, Gateway, Eureka, Saga).
-- **Frontend** (React + Vite).
+- **Frontend** (React + Vite) для генерации клиентских событий (`PAGE_VIEW`, `SEARCH`).
+- **Redis** для кэширования каталога и Rate Limiting (защита от брутфорса).
+- **Микросервисная архитектура** (выделение других микросервисов, Gateway, Eureka).
