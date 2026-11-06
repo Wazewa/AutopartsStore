@@ -2,8 +2,8 @@ package org.korolev.autopartsstore.api.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.korolev.autopartsstore.api.auth.dto.LoginRequest;
-import org.korolev.autopartsstore.api.auth.dto.RegisterRequest;
+import org.korolev.autopartsstore.auth.dto.LoginRequest;
+import org.korolev.autopartsstore.auth.dto.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;

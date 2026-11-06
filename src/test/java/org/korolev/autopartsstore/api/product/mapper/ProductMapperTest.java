@@ -1,10 +1,11 @@
 package org.korolev.autopartsstore.api.product.mapper;
 
 import org.junit.jupiter.api.Test;
-import org.korolev.autopartsstore.api.category.entity.CategoryEntity;
-import org.korolev.autopartsstore.api.product.dto.ProductRequest;
-import org.korolev.autopartsstore.api.product.dto.ProductResponse;
-import org.korolev.autopartsstore.api.product.entity.ProductEntity;
+import org.korolev.autopartsstore.category.entity.CategoryEntity;
+import org.korolev.autopartsstore.product.dto.ProductRequest;
+import org.korolev.autopartsstore.product.dto.ProductResponse;
+import org.korolev.autopartsstore.product.entity.ProductEntity;
+import org.korolev.autopartsstore.product.mapper.ProductMapper;
 import org.mapstruct.factory.Mappers;
 
 import java.math.BigDecimal;

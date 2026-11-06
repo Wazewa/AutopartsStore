@@ -1,0 +1,21 @@
+package org.korolev.autopartsstore.order.mapper;
+
+import org.korolev.autopartsstore.order.dto.OrderRequest;
+import org.korolev.autopartsstore.order.dto.OrderResponse;
+import org.korolev.autopartsstore.order.entity.OrderEntity;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
+
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface OrderMapper {
+    @Mapping(target = "userId", source = "user.id")
+    OrderResponse toResponse(OrderEntity orderEntity);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "admin", ignore = true)
+    @Mapping(target = "orderDate", ignore = true)
+    OrderEntity toEntity(OrderRequest orderRequest);
+}

@@ -1,7 +1,9 @@
 package org.korolev.autopartsstore.api.exception;
 
 import org.junit.jupiter.api.Test;
-import org.korolev.autopartsstore.api.dto.ErrorResponse;
+import org.korolev.autopartsstore.common.dto.ErrorResponse;
+import org.korolev.autopartsstore.common.exception.CustomExceptionHandler;
+import org.korolev.autopartsstore.common.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;

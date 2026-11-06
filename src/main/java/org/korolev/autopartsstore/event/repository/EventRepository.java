@@ -1,0 +1,25 @@
+package org.korolev.autopartsstore.event.repository;
+
+import java.util.List;
+import java.util.Optional;
+import org.korolev.autopartsstore.event.entity.EventEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+
+@Repository
+public interface EventRepository extends JpaRepository<EventEntity, Long> {
+    @EntityGraph(attributePaths = "user")
+    Page<EventEntity> findAll(Pageable pageable);
+
+    @EntityGraph(attributePaths = "user")
+    Optional<EventEntity> findById(Long id);
+
+    @Query(value = "SELECT * FROM event WHERE status = 'NEW' " +
+            "ORDER BY event_date LIMIT :limit FOR UPDATE SKIP LOCKED", nativeQuery = true)
+    List<EventEntity> findNewForUpdate(int limit);
+}

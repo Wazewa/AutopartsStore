@@ -1,6 +1,7 @@
 package org.korolev.autopartsstore.api.order.entity;
 
 import org.junit.jupiter.api.Test;
+import org.korolev.autopartsstore.order.entity.OrderStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

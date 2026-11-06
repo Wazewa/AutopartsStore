@@ -1,13 +1,12 @@
 package org.korolev.autopartsstore.api.cart;
 
 import org.junit.jupiter.api.Test;
-import org.korolev.autopartsstore.api.cart.entity.CartEntity;
-import org.korolev.autopartsstore.api.product.entity.ProductEntity;
-import org.korolev.autopartsstore.api.product.repository.ProductRepository;
-import org.korolev.autopartsstore.api.role.entity.RoleEntity;
-import org.korolev.autopartsstore.api.role.repository.RoleRepository;
-import org.korolev.autopartsstore.api.user.entity.UserEntity;
-import org.korolev.autopartsstore.api.user.repository.UserRepository;
+import org.korolev.autopartsstore.product.entity.ProductEntity;
+import org.korolev.autopartsstore.product.repository.ProductRepository;
+import org.korolev.autopartsstore.role.entity.RoleEntity;
+import org.korolev.autopartsstore.role.repository.RoleRepository;
+import org.korolev.autopartsstore.user.entity.UserEntity;
+import org.korolev.autopartsstore.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;

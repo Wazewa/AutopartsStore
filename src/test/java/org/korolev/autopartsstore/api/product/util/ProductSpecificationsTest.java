@@ -1,7 +1,8 @@
 package org.korolev.autopartsstore.api.product.util;
 
 import org.junit.jupiter.api.Test;
-import org.korolev.autopartsstore.api.product.dto.ProductFilter;
+import org.korolev.autopartsstore.product.dto.ProductFilter;
+import org.korolev.autopartsstore.product.util.ProductSpecifications;
 import org.springframework.data.jpa.domain.Specification;
 
 import static org.assertj.core.api.Assertions.assertThat;
