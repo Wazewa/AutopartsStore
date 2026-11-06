@@ -45,6 +45,8 @@ services:
     volumes:
       - ./grafana:/var/lib/grafana
     container_name: autoparts-store-grafana
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-clickhouse-datasource
     ports:
       - "3000:3000"
     depends_on:

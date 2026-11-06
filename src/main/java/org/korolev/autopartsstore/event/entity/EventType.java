@@ -2,15 +2,15 @@ package org.korolev.autopartsstore.event.entity;
 
 public enum EventType {
     PAGE_VIEW,
-    PRODUCT_VIEW,
-    CATEGORY_VIEW,
+    PRODUCT_VIEW,//
+    CATEGORY_VIEW,//
     SEARCH_RESULTS_VIEW,
-    ADD_TO_CART,
-    REMOVE_FROM_CART,
-    CART_VIEWED,
+    ADD_TO_CART,//
+    REMOVE_FROM_CART,//
+    CART_VIEWED,//
     CHECKOUT_STARTED,
     CHECKOUT_ABANDONED,
-    ORDER_CREATED,
+    ORDER_CREATED,//
     PAYMENT_INITIATED,
     PAYMENT_COMPLETED,
     PAYMENT_FAILED,

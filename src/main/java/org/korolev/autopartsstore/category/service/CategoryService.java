@@ -9,7 +9,10 @@ import org.korolev.autopartsstore.category.exception.CategoryInUseException;
 import org.korolev.autopartsstore.category.exception.CategoryNotFoundException;
 import org.korolev.autopartsstore.category.mapper.CategoryMapper;
 import org.korolev.autopartsstore.category.repository.CategoryRepository;
+import org.korolev.autopartsstore.event.entity.EventType;
+import org.korolev.autopartsstore.event.service.EventService;
 import org.korolev.autopartsstore.product.repository.ProductRepository;
+import org.korolev.autopartsstore.security.CurrentUserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,8 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     private final ProductRepository productRepository;
+    private final CurrentUserService currentUserService;
+    private final EventService eventService;
 
     @Transactional(readOnly = true)
     public List<CategoryResponse> findAllCategories() {
@@ -31,13 +36,18 @@ public class CategoryService {
                 .toList();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public CategoryResponse findCategoryById(Long id) {
-        return categoryMapper.toResponse(
+        CategoryResponse categoryResponse = categoryMapper.toResponse(
                 categoryRepository.findById(id)
                     .orElseThrow(
                     () -> new CategoryNotFoundException("Category not found.")
         ));
+
+        eventService.trackEvent(EventType.CATEGORY_VIEW,
+                currentUserService.getCurrentUserOrNull(), null);
+
+        return categoryResponse;
     }
 
     @Transactional

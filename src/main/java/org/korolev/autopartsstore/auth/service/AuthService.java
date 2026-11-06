@@ -5,12 +5,16 @@ import org.korolev.autopartsstore.auth.dto.AuthResponse;
 import org.korolev.autopartsstore.auth.dto.LoginRequest;
 import org.korolev.autopartsstore.auth.dto.RegisterRequest;
 import org.korolev.autopartsstore.auth.mapper.AuthMapper;
+import org.korolev.autopartsstore.event.entity.EventType;
+import org.korolev.autopartsstore.event.service.EventService;
+
 import org.korolev.autopartsstore.user.entity.UserEntity;
 import org.korolev.autopartsstore.user.exception.UserAlreadyExistsException;
 import org.korolev.autopartsstore.user.repository.UserRepository;
 import org.korolev.autopartsstore.role.entity.RoleEntity;
 import org.korolev.autopartsstore.role.repository.RoleRepository;
 import org.korolev.autopartsstore.security.JwtService;
+import org.korolev.autopartsstore.user.service.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,6 +33,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final UserService userService;
+    private final EventService eventService;
 
     @Transactional
     public AuthResponse register(RegisterRequest registerRequest) {
@@ -49,10 +55,13 @@ public class AuthService {
 
         String token = jwtService.generateToken(userDetails.loadUserByUsername(saved.getEmail()));
 
+        eventService.trackEvent(EventType.REGISTRATION,
+                saved, null);
+
         return new AuthResponse(token);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public AuthResponse login(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -63,6 +72,11 @@ public class AuthService {
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String token = jwtService.generateToken(userDetails);
+
+        UserEntity user = userService.findByEmail(userDetails.getUsername());
+
+        eventService.trackEvent(EventType.LOGIN,
+                user, null);
 
         return new AuthResponse(token);
     }
