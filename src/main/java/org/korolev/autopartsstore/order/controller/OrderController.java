@@ -17,7 +17,6 @@ import org.korolev.autopartsstore.order.service.OrderService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -39,7 +38,7 @@ public class OrderController {
     })
     @Operation(summary = "Получить все заказы", description = "Возвращает все заказы (с пагинацией)")
     @GetMapping
-    public ResponseEntity<PageResponse<OrderResponse>> getAllOrders(
+    public PageResponse<OrderResponse> getAllOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "25") int size,
             @RequestParam(defaultValue = "id") String sortBy,
@@ -52,8 +51,8 @@ public class OrderController {
     ) {
         OrderFilter orderFilter = new OrderFilter(status, dateFrom, dateTo);
 
-        return ResponseEntity.ok(orderService.findAllOrders(PageableFactory.create(page, size,
-                sortBy, direction, ALLOWED_SORT_FIELDS), orderFilter));
+        return orderService.findAllOrders(PageableFactory.create(page, size,
+                sortBy, direction, ALLOWED_SORT_FIELDS), orderFilter);
     }
 
     @ApiResponses({
@@ -63,9 +62,9 @@ public class OrderController {
     })
     @Operation(summary = "Получить заказ по ID", description = "Возвращает заказ с заданным ID")
     @GetMapping("/{id}")
-    public ResponseEntity<OrderResponse> getOrderById(
+    public OrderResponse getOrderById(
             @PathVariable Long id) {
-        return ResponseEntity.ok(orderService.findOrderById(id));
+        return orderService.findOrderById(id);
     }
 
     @ApiResponses({
@@ -74,14 +73,14 @@ public class OrderController {
     })
     @Operation(summary = "Получить мои заказы", description = "Возвращает заказы пользователя")
     @GetMapping("/me")
-public ResponseEntity<PageResponse<OrderResponse>> getMyOrders(
+public PageResponse<OrderResponse> getMyOrders(
           @RequestParam(defaultValue = "0") int page,
           @RequestParam(defaultValue = "25") int size,
           @RequestParam(defaultValue = "id") String sortBy,
           @RequestParam(defaultValue = "asc") String direction)
     {
         Pageable pageable = PageableFactory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
-        return ResponseEntity.ok(orderService.findMyOrders(pageable));
+        return orderService.findMyOrders(pageable);
     }
 
     @ApiResponses({
@@ -92,22 +91,22 @@ public ResponseEntity<PageResponse<OrderResponse>> getMyOrders(
     })
     @Operation(summary = "Создать заказ", description = "Создает заказ по заданному ID клиента")
     @PostMapping
-    public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody OrderRequest orderRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(orderRequest));
+    @ResponseStatus(HttpStatus.CREATED)
+    public OrderResponse createOrder(@Valid @RequestBody OrderRequest orderRequest) {
+        return orderService.createOrder(orderRequest);
     }
 
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Заказ успешно создан"),
             @ApiResponse(responseCode = "404", description = "Заказ с заданным ID не найден"),
             @ApiResponse(responseCode = "409", description = "Заказ невозможно перевести в заданное состояние"),
             @ApiResponse(responseCode = "400", description = "Невалидные данные")
     })
     @Operation(summary = "Обновить статус заказа", description = "Обновляет статус заказа по заданному ID заказа")
     @PatchMapping("/{id}/status")
-    public ResponseEntity<OrderResponse> updateOrderStatus(
+    public OrderResponse updateOrderStatus(
             @PathVariable Long id,
             @RequestBody @Valid UpdateOrderStatusRequest request) {
-        return ResponseEntity.ok(orderService.updateOrderStatus(id, request.event()));
+        return orderService.updateOrderStatus(id, request.event());
     }
 
     @ApiResponses({
@@ -116,10 +115,9 @@ public ResponseEntity<PageResponse<OrderResponse>> getMyOrders(
     })
     @Operation(summary = "Удалить заказ", description = "Удаляет заказ по заданному ID")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOrder(
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteOrder(
             @PathVariable Long id) {
         orderService.deleteOrderById(id);
-
-        return ResponseEntity.noContent().build();
     }
 }

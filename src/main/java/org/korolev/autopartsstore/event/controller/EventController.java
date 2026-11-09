@@ -12,7 +12,6 @@ import org.korolev.autopartsstore.event.dto.EventResponse;
 import org.korolev.autopartsstore.event.service.EventService;
 import org.korolev.autopartsstore.common.factory.PageableFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
 
@@ -36,14 +35,14 @@ public class EventController {
     @Operation(summary = "Получить все события", description = "Возвращает все пользовательские " +
             "события (с пагинацией)")
     @GetMapping
-    public ResponseEntity<PageResponse<EventResponse>> getAllEvents(
+    public PageResponse<EventResponse> getAllEvents(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "25") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String direction)
     {
         Pageable pageable = PageableFactory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
-        return ResponseEntity.ok(eventService.findAllEvents(pageable));
+        return eventService.findAllEvents(pageable);
     }
 
     @ApiResponses({
@@ -55,9 +54,9 @@ public class EventController {
     @Operation(summary = "Получить событие по ID",
             description = "Возвращает пользовательское событие по заданному ID")
     @GetMapping("/{id}")
-    public ResponseEntity<EventResponse> getEventById(
+    public EventResponse getEventById(
             @PathVariable Long id) {
-        return ResponseEntity.ok(eventService.findEventById(id));
+        return eventService.findEventById(id);
     }
 
     @ApiResponses({
@@ -67,7 +66,8 @@ public class EventController {
     @Operation(summary = "Создать событие",
             description = "Создает событие. События иммутабельны и не могут быть изменены или удалены")
     @PostMapping
-    public ResponseEntity<EventResponse> createEvent(@Valid @RequestBody EventRequest eventRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(eventService.createEvent(eventRequest));
+    @ResponseStatus(HttpStatus.CREATED)
+    public EventResponse createEvent(@Valid @RequestBody EventRequest eventRequest) {
+        return eventService.createEvent(eventRequest);
     }
 }

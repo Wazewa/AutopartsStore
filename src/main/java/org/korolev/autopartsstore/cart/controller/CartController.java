@@ -11,7 +11,6 @@ import org.korolev.autopartsstore.common.dto.PageResponse;
 import org.korolev.autopartsstore.common.factory.PageableFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -34,14 +33,14 @@ public class CartController {
     })
     @Operation(summary = "Получить все корзины", description = "Возвращает список всех пользовательских корзин")
     @GetMapping
-    public ResponseEntity<PageResponse<CartResponse>> getAllCarts(
+    public PageResponse<CartResponse> getAllCarts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "25") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String direction)
     {
         Pageable pageable = PageableFactory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
-        return ResponseEntity.ok(cartService.findAllCarts(pageable));
+        return cartService.findAllCarts(pageable);
     }
 
     @ApiResponses({
@@ -52,9 +51,9 @@ public class CartController {
     @Operation(summary = "Получить корзину по ID",
             description = "Возвращает пользовательскую корзину по заданному ID")
     @GetMapping("/{id}")
-    public ResponseEntity<CartResponse> getCartById(
+    public CartResponse getCartById(
             @PathVariable Long id) {
-        return ResponseEntity.ok(cartService.findCartById(id));
+        return cartService.findCartById(id);
     }
 
     @ApiResponses({
@@ -64,8 +63,8 @@ public class CartController {
     @Operation(summary = "Получить корзину пользователя",
             description = "Возвращает корзину пользователя")
     @GetMapping("/user/me")
-    public ResponseEntity<CartResponse> getCartByUserId() {
-        return ResponseEntity.ok(cartService.findMyCart());
+    public CartResponse getCartByUserId() {
+        return cartService.findMyCart();
     }
 
     @ApiResponses({
@@ -75,8 +74,9 @@ public class CartController {
     @Operation(summary = "Создать корзину пользователю",
             description = "Создает корзину для пользователя")
     @PostMapping("/user/me")
-    public ResponseEntity<CartResponse> getOrCreateCart() {
-        return ResponseEntity.status(HttpStatus.CREATED).body(cartService.getOrCreateCart());
+    @ResponseStatus(HttpStatus.CREATED)
+    public CartResponse getOrCreateCart() {
+        return cartService.getOrCreateCart();
     }
 
     @ApiResponses({
@@ -87,9 +87,8 @@ public class CartController {
     @Operation(summary = "Удалить корзину",
             description = "Удаляет корзину пользователя")
     @DeleteMapping("/user/me")
-    public ResponseEntity<Void> deleteCart() {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCart() {
         cartService.deleteCart();
-
-        return ResponseEntity.noContent().build();
     }
 }

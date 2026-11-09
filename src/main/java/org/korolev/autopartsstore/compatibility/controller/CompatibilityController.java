@@ -14,7 +14,6 @@ import org.korolev.autopartsstore.common.dto.PageResponse;
 import org.korolev.autopartsstore.common.factory.PageableFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -37,7 +36,7 @@ public class CompatibilityController {
     @Operation(summary = "Получить все совместимости", description = "Возвращает все совместимости с " +
             "товарами (с пагинацией, сортировкой и фильтрацией)")
     @GetMapping
-    public ResponseEntity<PageResponse<CompatibilityResponse>> getAllCompatibilities(
+    public PageResponse<CompatibilityResponse> getAllCompatibilities(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "25") int size,
             @RequestParam(defaultValue = "id") String sortBy,
@@ -50,7 +49,7 @@ public class CompatibilityController {
         CompatibilityFilter compatibilityFilter = new CompatibilityFilter(brand, model, year, productId);
 
         Pageable pageable = PageableFactory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
-        return ResponseEntity.ok(compatibilityService.findAllCompatibilities(pageable, compatibilityFilter));
+        return compatibilityService.findAllCompatibilities(pageable, compatibilityFilter);
     }
 
     @ApiResponses({
@@ -59,9 +58,9 @@ public class CompatibilityController {
     })
     @Operation(summary = "Получить совместимость по ID", description = "Возвращает совместимость по ID с товарами")
     @GetMapping("/{id}")
-    public ResponseEntity<CompatibilityResponse> getCompatibilityById(
+    public CompatibilityResponse getCompatibilityById(
             @PathVariable Long id) {
-        return ResponseEntity.ok(compatibilityService.findCompatibilityById(id));
+        return compatibilityService.findCompatibilityById(id);
     }
 
     @ApiResponses({
@@ -72,10 +71,10 @@ public class CompatibilityController {
     })
     @Operation(summary = "Создать совместимость", description = "Создает совместимость с товарами")
     @PostMapping
-    public ResponseEntity<CompatibilityResponse> createCompatibility(
+    @ResponseStatus(HttpStatus.CREATED)
+    public CompatibilityResponse createCompatibility(
             @Valid @RequestBody CompatibilityRequest compatibilityRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(compatibilityService.createCompatibility(compatibilityRequest));
+        return compatibilityService.createCompatibility(compatibilityRequest);
     }
 
     @ApiResponses({
@@ -86,10 +85,10 @@ public class CompatibilityController {
     })
     @Operation(summary = "Обновить совместимость по ID", description = "Обновляет совместимость с товарами")
     @PutMapping("/{id}")
-    public ResponseEntity<CompatibilityResponse> updateCompatibility(
+    public CompatibilityResponse updateCompatibility(
             @PathVariable Long id,
             @Valid @RequestBody CompatibilityRequest compatibilityRequest) {
-        return ResponseEntity.ok(compatibilityService.updateCompatibility(id, compatibilityRequest));
+        return compatibilityService.updateCompatibility(id, compatibilityRequest);
 
     }
 
@@ -100,9 +99,9 @@ public class CompatibilityController {
     })
     @Operation(summary = "Удалить совместимость по ID", description = "Удаляет совместимость с товарами")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCompatibility(
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCompatibility(
             @PathVariable Long id) {
         compatibilityService.deleteCompatibility(id);
-        return ResponseEntity.noContent().build();
     }
 }

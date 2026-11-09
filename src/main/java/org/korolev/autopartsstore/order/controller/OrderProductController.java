@@ -10,16 +10,7 @@ import org.korolev.autopartsstore.order.dto.OrderProductRequest;
 import org.korolev.autopartsstore.order.dto.OrderProductResponse;
 import org.korolev.autopartsstore.order.service.OrderProductService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -38,8 +29,8 @@ public class OrderProductController {
     @Operation(summary = "Получить все элементы заказа",
             description = "Возвращает все элементы заказа с заданным ID")
     @GetMapping("/{orderId}/items")
-    public ResponseEntity<List<OrderProductResponse>> getOrderItems(@PathVariable Long orderId) {
-        return ResponseEntity.ok(orderProductService.findOrderItems(orderId));
+    public List<OrderProductResponse> getOrderItems(@PathVariable Long orderId) {
+        return orderProductService.findOrderItems(orderId);
     }
 
     @ApiResponses({
@@ -51,13 +42,12 @@ public class OrderProductController {
     @Operation(summary = "Добавить товар в заказ",
             description = "Добавляет товар в заказ. Заказ можно менять только в статусах PENDING или PROCESSING")
     @PostMapping("/{orderId}/items")
-    public ResponseEntity<OrderProductResponse> addProductToOrder(
+    @ResponseStatus(HttpStatus.CREATED)
+    public OrderProductResponse addProductToOrder(
             @PathVariable Long orderId,
             @Valid @RequestBody OrderProductRequest orderProductRequest
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderProductService.addProductToOrder(
-                orderId, orderProductRequest)
-        );
+        return orderProductService.addProductToOrder(orderId, orderProductRequest);
     }
 
     @ApiResponses({
@@ -69,11 +59,11 @@ public class OrderProductController {
             description = "Обновляет количество товара в заказе с заданным ID. " +
                     "Заказ можно менять только в статусах PENDING или PROCESSING")
     @PutMapping("/{orderId}/items/{productId}")
-    public ResponseEntity<OrderProductResponse> updateQuantity(
+    public OrderProductResponse updateQuantity(
            @PathVariable Long orderId,
            @PathVariable Long productId,
            @RequestParam Integer quantity) {
-        return ResponseEntity.ok(orderProductService.updateQuantity(orderId, productId, quantity));
+        return orderProductService.updateQuantity(orderId, productId, quantity);
     }
 
     @ApiResponses({
@@ -85,12 +75,11 @@ public class OrderProductController {
             description = "Удаляет конкретный товар из заказа с заданным ID. " +
                     "Товар из заказа можно удалять только в статусах PENDING или PROCESSING")
     @DeleteMapping("/{orderId}/items/{productId}")
-    public ResponseEntity<Void> removeProductFromOrder(
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeProductFromOrder(
             @PathVariable Long orderId,
             @PathVariable Long productId) {
         orderProductService.removeProductFromOrder(orderId, productId);
-
-        return ResponseEntity.noContent().build();
     }
 
     @ApiResponses({
@@ -101,10 +90,9 @@ public class OrderProductController {
     @Operation(summary = "Очистить заказ",
             description = "Очищает заказ с заданным ID. Заказ можно очищать только в статусах PENDING или PROCESSING")
     @DeleteMapping("/{orderId}/items")
-    public ResponseEntity<Void> clearOrder(
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void clearOrder(
             @PathVariable Long orderId) {
         orderProductService.clearOrder(orderId);
-
-        return ResponseEntity.noContent().build();
     }
 }
