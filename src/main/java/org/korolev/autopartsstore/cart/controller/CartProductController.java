@@ -10,16 +10,7 @@ import org.korolev.autopartsstore.cart.dto.CartProductRequest;
 import org.korolev.autopartsstore.cart.dto.CartProductResponse;
 import org.korolev.autopartsstore.cart.service.CartProductService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
@@ -39,9 +30,9 @@ public class CartProductController {
     @Operation(summary = "Получить все элементы корзины",
             description = "Возвращает все элементы корзины с заданным ID")
     @GetMapping("/{cartId}/items")
-    public ResponseEntity<List<CartProductResponse>> getCartItems(
+    public List<CartProductResponse> getCartItems(
             @PathVariable Long cartId) {
-        return ResponseEntity.ok(cartProductService.getCartItems(cartId));
+        return cartProductService.getCartItems(cartId);
     }
 
     @ApiResponses({
@@ -52,13 +43,13 @@ public class CartProductController {
     @Operation(summary = "Добавить товар в корзину",
             description = "Добавляет элемент в корзину с заданным ID")
     @PostMapping ("/{cartId}/items")
-    public ResponseEntity<CartProductResponse> addProductToCart(
+    @ResponseStatus(HttpStatus.CREATED)
+    public CartProductResponse addProductToCart(
            @PathVariable Long cartId,
-                                                                 @Valid @RequestBody
-                                                                 CartProductRequest cartProductRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(cartProductService.addProductToCart(
-                cartId, cartProductRequest)
-        );
+           @Valid @RequestBody
+           CartProductRequest cartProductRequest) {
+        return cartProductService.addProductToCart(
+                cartId, cartProductRequest);
     }
 
     @ApiResponses({
@@ -68,11 +59,11 @@ public class CartProductController {
     @Operation(summary = "Обновить количество товара в корзине",
             description = "Обновляет количество товара в корзине с заданным ID")
     @PutMapping("/{cartId}/items/{productId}")
-    public ResponseEntity<CartProductResponse> updateQuantity(
+    public CartProductResponse updateQuantity(
             @PathVariable Long cartId,
             @PathVariable Long productId,
             @RequestParam Integer quantity) {
-        return ResponseEntity.ok(cartProductService.updateQuantity(cartId, productId, quantity));
+        return cartProductService.updateQuantity(cartId, productId, quantity);
     }
 
     @ApiResponses({
@@ -82,12 +73,11 @@ public class CartProductController {
     @Operation(summary = "Удалить товар из корзины",
             description = "Удаляет конкретный товар из корзины с заданным ID")
     @DeleteMapping("/{cartId}/items/{productId}")
-    public ResponseEntity<Void> removeProductFromCart(
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeProductFromCart(
             @PathVariable Long cartId,
             @PathVariable Long productId) {
         cartProductService.removeProductFromCart(cartId, productId);
-
-        return ResponseEntity.noContent().build();
     }
 
     @ApiResponses({
@@ -97,10 +87,9 @@ public class CartProductController {
     @Operation(summary = "Очистить корзину",
             description = "Очищает корзину с заданным ID")
     @DeleteMapping("/{cartId}/items")
-    public ResponseEntity<Void> clearCart(
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void clearCart(
             @PathVariable Long cartId) {
         cartProductService.clearCart(cartId);
-
-        return ResponseEntity.noContent().build();
     }
 }

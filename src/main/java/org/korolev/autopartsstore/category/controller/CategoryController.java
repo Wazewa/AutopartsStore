@@ -10,7 +10,6 @@ import org.korolev.autopartsstore.category.dto.CategoryRequest;
 import org.korolev.autopartsstore.category.dto.CategoryResponse;
 import org.korolev.autopartsstore.category.service.CategoryService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,8 +27,8 @@ public class CategoryController {
     )
     @Operation(summary = "Получить все категории", description = "Возвращает список всех категорий товаров")
     @GetMapping
-    public ResponseEntity<List<CategoryResponse>> getCategories() {
-        return ResponseEntity.ok(categoryService.findAllCategories());
+    public List<CategoryResponse> getCategories() {
+        return categoryService.findAllCategories();
     }
 
     @ApiResponses({
@@ -40,9 +39,9 @@ public class CategoryController {
     })
     @Operation(summary = "Получить категорию по ID", description = "Возвращает категорию товаров по заданному ID")
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryResponse> getCategoryById(
+    public CategoryResponse getCategoryById(
             @PathVariable Long id) {
-        return ResponseEntity.ok(categoryService.findCategoryById(id));
+        return categoryService.findCategoryById(id);
     }
 
     @ApiResponses({
@@ -56,8 +55,9 @@ public class CategoryController {
     })
     @Operation(summary = "Создать категорию", description = "Создает категорию товаров")
     @PostMapping
-    public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CategoryRequest categoryRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(categoryRequest));
+    @ResponseStatus(HttpStatus.CREATED)
+    public CategoryResponse createCategory(@Valid @RequestBody CategoryRequest categoryRequest) {
+        return categoryService.createCategory(categoryRequest);
     }
 
     @ApiResponses({
@@ -74,10 +74,10 @@ public class CategoryController {
     })
     @Operation(summary = "Обновить категорию", description = "Обновляет категорию товаров с заданным ID")
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryResponse> updateCategory(
+    public CategoryResponse updateCategory(
             @PathVariable Long id,
             @Valid @RequestBody CategoryRequest categoryRequest) {
-        return ResponseEntity.ok(categoryService.updateCategory(id, categoryRequest));
+        return categoryService.updateCategory(id, categoryRequest);
     }
 
     @ApiResponses({
@@ -92,10 +92,9 @@ public class CategoryController {
     @Operation(summary = "Удалить категорию по ID", description = "Удаляет категорию товаров по заданному ID. " +
             "Если категория используется товарами, то вернется 409 (Conflict)")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCategory(
             @PathVariable Long id) {
         categoryService.deleteCategory(id);
-
-        return ResponseEntity.noContent().build();
     }
 }

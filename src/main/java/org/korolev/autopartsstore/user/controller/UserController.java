@@ -9,7 +9,7 @@ import org.korolev.autopartsstore.common.dto.PageResponse;
 import org.korolev.autopartsstore.user.dto.UserResponse;
 import org.korolev.autopartsstore.user.service.UserService;
 import org.korolev.autopartsstore.common.factory.PageableFactory;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.data.domain.Pageable;
@@ -32,14 +32,14 @@ public class UserController {
     @Operation(summary = "Получить всех пользователей", description = "Возвращает список всех " +
             "пользователей (с пагинацией))")
     @GetMapping
-    public ResponseEntity<PageResponse<UserResponse>> getAllUsers(
+    public PageResponse<UserResponse> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "25") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String direction)
     {
         Pageable pageable = PageableFactory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS);
-        return ResponseEntity.ok(userService.findAllUsers(pageable));
+        return userService.findAllUsers(pageable);
     }
 
     @ApiResponses({
@@ -49,9 +49,9 @@ public class UserController {
     })
     @Operation(summary = "Получить пользователя по ID", description = "Возвращает пользователя по ID")
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUserById(
+    public UserResponse getUserById(
             @PathVariable Long id) {
-        return ResponseEntity.ok(userService.findUserById(id));
+        return userService.findUserById(id);
     }
 
     @ApiResponses({
@@ -60,10 +60,9 @@ public class UserController {
     })
     @Operation(summary = "Удалить пользователя по ID", description = "Удаляет пользователя по ID")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUser(
             @PathVariable Long id) {
         userService.deleteUser(id);
-
-        return ResponseEntity.noContent().build();
     }
 }

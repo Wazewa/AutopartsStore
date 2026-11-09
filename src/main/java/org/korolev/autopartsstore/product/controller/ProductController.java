@@ -13,7 +13,6 @@ import org.korolev.autopartsstore.product.dto.ProductRequest;
 import org.korolev.autopartsstore.product.dto.ProductResponse;
 import org.korolev.autopartsstore.product.service.ProductService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -36,7 +35,7 @@ public class ProductController {
     @Operation(summary = "Получить все товары", description = "Возвращает список всех товаров " +
             "(с пагинацией, сортировкой и фильтрацией)")
     @GetMapping
-    public ResponseEntity<PageResponse<ProductResponse>> getProducts(
+    public PageResponse<ProductResponse> getProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "25") int size,
             @RequestParam(defaultValue = "id") String sortBy,
@@ -52,8 +51,8 @@ public class ProductController {
         ProductFilter productFilter = new ProductFilter(name, brand, categoryId,
                 article, priceFrom, priceTo, inStock);
 
-        return ResponseEntity.ok(productService.findAllProducts(
-                PageableFactory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS), productFilter));
+        return productService.findAllProducts(
+                PageableFactory.create(page, size, sortBy, direction, ALLOWED_SORT_FIELDS), productFilter);
     }
 
     @ApiResponses({
@@ -62,9 +61,9 @@ public class ProductController {
     })
     @Operation(summary = "Получить товар по ID", description = "Возвращает товар по ID")
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponse> getProductById(
+    public ProductResponse getProductById(
             @PathVariable Long id) {
-        return ResponseEntity.ok(productService.findProductById(id));
+        return productService.findProductById(id);
     }
 
     @ApiResponses({
@@ -75,8 +74,9 @@ public class ProductController {
     })
     @Operation(summary = "Создать товар", description = "Создает товар")
     @PostMapping
-    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductRequest productRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productRequest));
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProductResponse createProduct(@Valid @RequestBody ProductRequest productRequest) {
+        return productService.createProduct(productRequest);
     }
 
     @ApiResponses({
@@ -88,10 +88,10 @@ public class ProductController {
     })
     @Operation(summary = "Обновить товар", description = "Обновляет товар по заданному ID")
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponse> updateProduct(
+    public ProductResponse updateProduct(
             @PathVariable Long id,
             @Valid @RequestBody ProductRequest productRequest) {
-        return ResponseEntity.ok(productService.updateProduct(id, productRequest));
+        return productService.updateProduct(id, productRequest);
     }
 
     @ApiResponses({
@@ -101,9 +101,9 @@ public class ProductController {
     })
     @Operation(summary = "Удалить товар по ID", description = "Удаляет товар по ID")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProduct(
             @PathVariable Long id) {
         productService.deleteProduct(id);
-        return ResponseEntity.noContent().build();
     }
 }
