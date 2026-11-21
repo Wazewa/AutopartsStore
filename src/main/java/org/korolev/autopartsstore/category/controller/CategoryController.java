@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.korolev.autopartsstore.category.dto.CategoryRequest;
 import org.korolev.autopartsstore.category.dto.CategoryResponse;
+import org.korolev.autopartsstore.category.service.CategoryFacade;
 import org.korolev.autopartsstore.category.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import java.util.List;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final CategoryFacade categoryFacade;
 
     @ApiResponses(
             @ApiResponse(responseCode = "200", description = "Категории товаров успешно отображены")
@@ -41,7 +43,7 @@ public class CategoryController {
     @GetMapping("/{id}")
     public CategoryResponse getCategoryById(
             @PathVariable Long id) {
-        return categoryService.findCategoryById(id);
+        return categoryFacade.getCategory(id);
     }
 
     @ApiResponses({

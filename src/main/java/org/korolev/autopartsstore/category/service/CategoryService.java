@@ -9,10 +9,11 @@ import org.korolev.autopartsstore.category.exception.CategoryInUseException;
 import org.korolev.autopartsstore.category.exception.CategoryNotFoundException;
 import org.korolev.autopartsstore.category.mapper.CategoryMapper;
 import org.korolev.autopartsstore.category.repository.CategoryRepository;
-import org.korolev.autopartsstore.event.entity.EventType;
-import org.korolev.autopartsstore.event.service.EventService;
+import org.korolev.autopartsstore.common.config.CacheNames;
 import org.korolev.autopartsstore.product.repository.ProductRepository;
-import org.korolev.autopartsstore.security.CurrentUserService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +27,6 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     private final ProductRepository productRepository;
-    private final CurrentUserService currentUserService;
-    private final EventService eventService;
 
     @Transactional(readOnly = true)
     public List<CategoryResponse> findAllCategories() {
@@ -36,18 +35,14 @@ public class CategoryService {
                 .toList();
     }
 
-    @Transactional
+    @Cacheable(value = CacheNames.CATEGORIES, key = "#id")
+    @Transactional(readOnly = true)
     public CategoryResponse findCategoryById(Long id) {
-        CategoryResponse categoryResponse = categoryMapper.toResponse(
+        return categoryMapper.toResponse(
                 categoryRepository.findById(id)
                     .orElseThrow(
                     () -> new CategoryNotFoundException("Category not found.")
         ));
-
-        eventService.trackEvent(EventType.CATEGORY_VIEW,
-                currentUserService.getCurrentUserOrNull(), null);
-
-        return categoryResponse;
     }
 
     @Transactional
@@ -65,6 +60,7 @@ public class CategoryService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
+    @CachePut(value = CacheNames.CATEGORIES, key = "#id")
     public CategoryResponse updateCategory(Long id, CategoryRequest categoryRequest) {
 
         CategoryEntity categoryEntity = categoryRepository.findById(id).orElseThrow(
@@ -83,6 +79,7 @@ public class CategoryService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
+    @CacheEvict(value = CacheNames.CATEGORIES, key = "#id")
     public void deleteCategory(Long id) {
         if(!categoryRepository.existsById(id)) {
             throw new CategoryNotFoundException("Category not found.");

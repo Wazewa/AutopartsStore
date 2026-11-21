@@ -95,7 +95,6 @@ public class OrderService {
         orderRepository.delete(order);
     }
 
-    @Transactional(readOnly = true)
     public OrderEntity requireOwnOrder(Long id) {
         OrderEntity order = orderRepository.findById(id).orElseThrow(
                 () -> new OrderNotFoundException("Order not found")
