@@ -27,6 +27,13 @@ spring:
     template:
       default-topic: client-events-topic
 
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 2s
+      connect-timeout: 2s
+
 springdoc:
   api-docs:
     enabled: false

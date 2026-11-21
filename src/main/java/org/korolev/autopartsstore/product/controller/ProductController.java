@@ -11,6 +11,7 @@ import org.korolev.autopartsstore.common.factory.PageableFactory;
 import org.korolev.autopartsstore.product.dto.ProductFilter;
 import org.korolev.autopartsstore.product.dto.ProductRequest;
 import org.korolev.autopartsstore.product.dto.ProductResponse;
+import org.korolev.autopartsstore.product.service.ProductFacade;
 import org.korolev.autopartsstore.product.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,7 @@ public class ProductController {
             Set.of("id", "name", "price", "article", "quantity", "brand");
 
     private final ProductService productService;
+    private final ProductFacade productFacade;
 
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Все товары успешно отображены " +
@@ -63,7 +65,7 @@ public class ProductController {
     @GetMapping("/{id}")
     public ProductResponse getProductById(
             @PathVariable Long id) {
-        return productService.findProductById(id);
+        return productFacade.getProduct(id);
     }
 
     @ApiResponses({
